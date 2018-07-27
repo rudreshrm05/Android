@@ -8,6 +8,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.SignalStrength;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -17,13 +20,15 @@ import android.widget.Toast;
  * Created by Rudresh on 25-07-2018.
  */
 
-public class Main_activity extends Activity {
+public class Main_activity extends Activity{
 
-    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim;
-    LinearLayout bluetooth_Option, wifi_option, dual_sim_option;
+    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength;
+    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option;
     BluetoothAdapter BA;
     WifiManager wifi;
     TelephonyInfo telephonyInfo;
+    public int signalStrengthDbm = 0;
+    public int signalStrengthAsuLevel = 0;
 
     final BroadcastReceiver broad_cast_receiver=new BroadcastReceiver() {
         @Override
@@ -48,7 +53,6 @@ public class Main_activity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
-
         telephonyInfo = TelephonyInfo.getInstance(this);
         bluetooth_Option=(LinearLayout)findViewById(R.id.bluetooth_option);
         indicator_bluetooth=(Button)findViewById(R.id.indicator_bluetooth);
@@ -56,17 +60,42 @@ public class Main_activity extends Activity {
         indicator_wifi=(Button)findViewById(R.id.indicator_wifi);
         dual_sim_option=(LinearLayout)findViewById(R.id.dual_sim_option);
         indicator_dual_sim=(Button)findViewById(R.id.indicator_dual_sim);
+        signal_strength_option=(LinearLayout)findViewById(R.id.signal_strength_option);
+        indicator_signal_strength=(Button)findViewById(R.id.indicator_signal_strength);
 
-        IntentFilter filter_bluetooth=new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(broad_cast_receiver, filter_bluetooth);
-        IntentFilter filter_wifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        registerReceiver(broad_cast_receiver, filter_wifi);
+        final PhoneStateListener phone_state_listener=new PhoneStateListener(){
+            @Override
+            public void onSignalStrengthsChanged(SignalStrength signalStrength)
+            {
+                signalStrengthDbm = getSignalStrengthByName(signalStrength, "getDbm");
+                signalStrengthAsuLevel = getSignalStrengthByName(signalStrength, "getAsuLevel");
+            }
+
+            private int getSignalStrengthByName(SignalStrength signalStrength, String methodName)
+            {
+                try
+                {
+                    Class classFromName = Class.forName(SignalStrength.class.getName());
+                    java.lang.reflect.Method method = classFromName.getDeclaredMethod(methodName);
+                    Object object = method.invoke(signalStrength);
+                    return (int)object;
+                }
+                catch (Exception ex)
+                {
+                    return 0;
+                }
+            }
+
+        };TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        telephonyManager.listen(phone_state_listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
         bluetooth_Option.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
                 BA = BluetoothAdapter.getDefaultAdapter();
+                IntentFilter filter_bluetooth=new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+                registerReceiver(broad_cast_receiver, filter_bluetooth);
                 if(BA==null){
                     indicator_bluetooth.setBackgroundResource(R.drawable.test_fail);
                 }
@@ -86,6 +115,8 @@ public class Main_activity extends Activity {
             @Override
             public void onClick(View v) {
                 wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                IntentFilter filter_wifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
+                registerReceiver(broad_cast_receiver, filter_wifi);
 
                 if(wifi==null){
                     indicator_wifi.setBackgroundResource(R.drawable.test_fail);
@@ -130,8 +161,20 @@ public class Main_activity extends Activity {
                     else{
                         indicator_dual_sim.setBackgroundResource(R.drawable.test_fail);
                     }
-
                 }
+            }
+        });
+
+        signal_strength_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(signalStrengthDbm > -97 && signalStrengthAsuLevel > 6){
+                    indicator_signal_strength.setBackgroundResource(R.drawable.test_ok);
+                }
+                else{
+                    indicator_signal_strength.setBackgroundResource(R.drawable.test_fail);
+                }
+                Toast.makeText(Main_activity.this,"dBm = "+signalStrengthDbm+"\n"+"asu = "+signalStrengthAsuLevel,Toast.LENGTH_SHORT).show();
             }
         });
     }
