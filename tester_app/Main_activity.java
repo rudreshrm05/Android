@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
@@ -24,8 +25,8 @@ import android.widget.Toast;
 
 public class Main_activity extends Activity{
 
-    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength, indicator_nfc;
-    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option;
+    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength, indicator_nfc, indicator_headphone_jack;
+    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option, headphone_jack_option;
     BluetoothAdapter BA;
     WifiManager wifi;
     TelephonyInfo telephonyInfo;
@@ -48,6 +49,11 @@ public class Main_activity extends Activity{
                     indicator_wifi.setBackgroundResource(R.drawable.test_ok);
                 }
             }
+            if(action.equals(AudioManager.ACTION_HEADSET_PLUG)){
+                if(intent.getIntExtra("state", 0) == 1){
+                    indicator_headphone_jack.setBackgroundResource(R.drawable.test_ok);
+                }
+            }
         }
     };
 
@@ -66,6 +72,8 @@ public class Main_activity extends Activity{
         indicator_signal_strength=(Button)findViewById(R.id.indicator_signal_strength);
         nfc_option=(LinearLayout)findViewById(R.id.nfc_option);
         indicator_nfc=(Button)findViewById(R.id.indicator_nfc);
+        headphone_jack_option=(LinearLayout)findViewById(R.id.headphone_jack_option);
+        indicator_headphone_jack=(Button)findViewById(R.id.indicator_headphone_jack);
 
         final PhoneStateListener phone_state_listener=new PhoneStateListener(){
             @Override
@@ -194,6 +202,15 @@ public class Main_activity extends Activity{
                 else{
                     indicator_nfc.setBackgroundResource(R.drawable.test_ok);
                 }
+            }
+        });
+
+        headphone_jack_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IntentFilter filter_headset = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+                registerReceiver(broad_cast_receiver, filter_headset);
+                indicator_headphone_jack.setBackgroundResource(R.drawable.test_fail);
             }
         });
     }
