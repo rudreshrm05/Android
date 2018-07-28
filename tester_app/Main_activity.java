@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
@@ -19,14 +20,16 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.util.List;
+
 /**
  * Created by Rudresh on 25-07-2018.
  */
 
 public class Main_activity extends Activity{
 
-    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength, indicator_nfc, indicator_headphone_jack;
-    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option, headphone_jack_option;
+    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength, indicator_nfc, indicator_headphone_jack, indicator_basic_apps;
+    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option, headphone_jack_option, basic_apps_option;
     BluetoothAdapter BA;
     WifiManager wifi;
     TelephonyInfo telephonyInfo;
@@ -74,6 +77,9 @@ public class Main_activity extends Activity{
         indicator_nfc=(Button)findViewById(R.id.indicator_nfc);
         headphone_jack_option=(LinearLayout)findViewById(R.id.headphone_jack_option);
         indicator_headphone_jack=(Button)findViewById(R.id.indicator_headphone_jack);
+        basic_apps_option=(LinearLayout)findViewById(R.id.basic_apps_option);
+        indicator_basic_apps=(Button)findViewById(R.id.indicator_basic_apps);
+
 
         final PhoneStateListener phone_state_listener=new PhoneStateListener(){
             @Override
@@ -211,6 +217,35 @@ public class Main_activity extends Activity{
                 IntentFilter filter_headset = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
                 registerReceiver(broad_cast_receiver, filter_headset);
                 indicator_headphone_jack.setBackgroundResource(R.drawable.test_fail);
+            }
+        });
+
+        basic_apps_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int app_count=0, mpi=0;
+                boolean isPackageExist;
+                String s="";
+                String[] missing_packages=new String[8];
+                String[] package_names={getString(R.string.settings), getString(R.string.playstore), getString(R.string.google),getString(R.string.gmail), getString(R.string.google_maps), getString(R.string.calculator), getString(R.string.calendar), getString(R.string.messaging)};
+                List<ApplicationInfo> packages = Main_activity.this.getPackageManager().getInstalledApplications(0);
+                for(int i=0;i<8;i++){
+                    isPackageExist=false;
+                    for (ApplicationInfo packageInfo : packages) {
+                        if (package_names[i].equals(packageInfo.packageName)) {
+                            isPackageExist=true;
+                        }
+                    }
+                    if(isPackageExist){
+                        app_count++;
+                    }
+                    else{
+                        missing_packages[mpi]=package_names[i];
+                        mpi++;
+                    }
+                }
+                if(app_count==8)indicator_basic_apps.setBackgroundResource(R.drawable.test_ok);
+                else indicator_basic_apps.setBackgroundResource(R.drawable.test_fail);
             }
         });
     }

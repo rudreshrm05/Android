@@ -14,7 +14,7 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="TESTER"
-            android:textColor="@color/white"
+            android:textColor="@color/colorAccent"
             android:textSize="40dp"
             android:fontFamily="serif"
             android:layout_gravity="center"
@@ -195,6 +195,36 @@
 
             <Button
                 android:id="@+id/indicator_headphone_jack"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@color/black"
+                android:padding="10dp"/>
+        </LinearLayout>
+
+        <!--Basic apps option-->
+
+        <LinearLayout
+            android:id="@+id/basic_apps_option"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/black"
+            android:orientation="horizontal"
+            android:weightSum="100">
+
+            <TextView
+                android:id="@+id/text_basic_apps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="90"
+                android:background="@color/black"
+                android:text="Basic apps"
+                android:textColor="@color/white"
+                android:textSize="35dp"
+                android:layout_marginLeft="10dp"/>
+
+            <Button
+                android:id="@+id/indicator_basic_apps"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:background="@color/black"
