@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcManager;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
@@ -22,8 +24,8 @@ import android.widget.Toast;
 
 public class Main_activity extends Activity{
 
-    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength;
-    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option;
+    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength, indicator_nfc;
+    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option;
     BluetoothAdapter BA;
     WifiManager wifi;
     TelephonyInfo telephonyInfo;
@@ -62,6 +64,8 @@ public class Main_activity extends Activity{
         indicator_dual_sim=(Button)findViewById(R.id.indicator_dual_sim);
         signal_strength_option=(LinearLayout)findViewById(R.id.signal_strength_option);
         indicator_signal_strength=(Button)findViewById(R.id.indicator_signal_strength);
+        nfc_option=(LinearLayout)findViewById(R.id.nfc_option);
+        indicator_nfc=(Button)findViewById(R.id.indicator_nfc);
 
         final PhoneStateListener phone_state_listener=new PhoneStateListener(){
             @Override
@@ -175,6 +179,21 @@ public class Main_activity extends Activity{
                     indicator_signal_strength.setBackgroundResource(R.drawable.test_fail);
                 }
                 Toast.makeText(Main_activity.this,"dBm = "+signalStrengthDbm+"\n"+"asu = "+signalStrengthAsuLevel,Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        nfc_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NfcManager manager = (NfcManager)Main_activity.this.getSystemService(Context.NFC_SERVICE);
+                NfcAdapter adapter = manager.getDefaultAdapter();
+                if(adapter==null){
+                    indicator_nfc.setBackgroundResource(R.drawable.test_fail);
+                    Toast.makeText(Main_activity.this,"Device does not support NFC",Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    indicator_nfc.setBackgroundResource(R.drawable.test_ok);
+                }
             }
         });
     }

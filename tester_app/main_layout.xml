@@ -126,7 +126,7 @@
                 android:id="@+id/text_signal_strength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="84"
+                android:layout_weight="85"
                 android:background="@color/black"
                 android:text="Signal strength"
                 android:textColor="@color/white"
@@ -135,6 +135,36 @@
 
             <Button
                 android:id="@+id/indicator_signal_strength"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@color/black"
+                android:padding="10dp"/>
+        </LinearLayout>
+
+        <!--NFC option-->
+
+        <LinearLayout
+            android:id="@+id/nfc_option"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/black"
+            android:orientation="horizontal"
+            android:weightSum="100">
+
+            <TextView
+                android:id="@+id/text_nfc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="93"
+                android:background="@color/black"
+                android:text="NFC"
+                android:textColor="@color/white"
+                android:textSize="35dp"
+                android:layout_marginLeft="10dp"/>
+
+            <Button
+                android:id="@+id/indicator_nfc"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:background="@color/black"
