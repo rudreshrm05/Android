@@ -1,6 +1,7 @@
 package com.example.rudresh.tester;
 
 import android.bluetooth.BluetoothAdapter;
+import android.widget.Button;
 
 /**
  * Created by Rudresh on 02-08-2018.
@@ -8,17 +9,17 @@ import android.bluetooth.BluetoothAdapter;
 
 public class Test_bluetooth {
 
-    static boolean test_bluetooth(BluetoothAdapter BA){
+    static void test_bluetooth(BluetoothAdapter BA, Button indicator_bluetooth){
         if(BA==null){
-            return false;
+            indicator_bluetooth.setBackgroundResource(R.drawable.test_fail);
         }
         else {
             BA.enable();
             if (BA.isEnabled()) {
-                return true;
+                indicator_bluetooth.setBackgroundResource(R.drawable.test_ok);
             }
             else {
-                return false;
+                indicator_bluetooth.setBackgroundResource(R.drawable.test_fail);
             }
         }
     }

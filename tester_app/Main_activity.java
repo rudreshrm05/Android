@@ -7,17 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
-import android.media.AudioFormat;
 import android.media.AudioManager;
-import android.media.AudioRecord;
 import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-import android.net.wifi.WifiEnterpriseConfig;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
@@ -25,10 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import java.util.List;
-
-import static java.lang.System.exit;
 
 /**
  * Created by Rudresh on 25-07-2018.
@@ -45,32 +37,34 @@ public class Main_activity extends Activity{
     AudioManager audioManager;
     TelephonyInfo telephonyInfo;
     MediaPlayer test_audio_file;
-    MediaRecorder test_sound;
     public int signalStrengthDbm = 0;
     public int signalStrengthAsuLevel = 0;
-    int bufferSize,j,i;
-    double lastLevel, audio_samples[]=new double[6];
-    AudioRecord audio;
-    Thread thread;
-    String results[];
+
+    //Broadcast receiver to receive intents
 
     final BroadcastReceiver broad_cast_receiver=new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+
             if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
+
                 if(state==BluetoothAdapter.STATE_ON){
                     indicator_bluetooth.setBackgroundResource(R.drawable.test_ok);
                 }
             }
+
             if (action.equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
                 int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
+
                 if (state == WifiManager.WIFI_STATE_ENABLED||state == WifiManager.WIFI_STATE_ENABLING) {
                     indicator_wifi.setBackgroundResource(R.drawable.test_ok);
                 }
             }
+
             if(action.equals(AudioManager.ACTION_HEADSET_PLUG)){
+
                 if(intent.getIntExtra("state", 0) == 1){
                     indicator_headphone_jack.setBackgroundResource(R.drawable.test_ok);
                 }
@@ -82,6 +76,7 @@ public class Main_activity extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
+
         bluetooth_Option=(LinearLayout)findViewById(R.id.bluetooth_option);
         indicator_bluetooth=(Button)findViewById(R.id.indicator_bluetooth);
         wifi_option=(LinearLayout)findViewById(R.id.wifi_option);
@@ -99,11 +94,11 @@ public class Main_activity extends Activity{
         speaker_option=(LinearLayout)findViewById(R.id.speaker_option);
         indicator_speaker=(Button)findViewById(R.id.indicator_speaker);
 
-
-
+        //A phoneStateListener which listens signal changes and populate 'signalStrengthDbm' and 'signalStrengthAsuLevel'
 
         final PhoneStateListener phone_state_listener=new PhoneStateListener(){
             @Override
+
             public void onSignalStrengthsChanged(SignalStrength signalStrength)
             {
                 signalStrengthDbm = getSignalStrengthByName(signalStrength, "getDbm");
@@ -124,9 +119,12 @@ public class Main_activity extends Activity{
                     return 0;
                 }
             }
+        };
 
-        }; TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-           telephonyManager.listen(phone_state_listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        telephonyManager.listen(phone_state_listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+
+        //Testing Bluetooth
 
         bluetooth_Option.setOnClickListener(new View.OnClickListener(){
 
@@ -135,16 +133,11 @@ public class Main_activity extends Activity{
                 BA = BluetoothAdapter.getDefaultAdapter();
                 IntentFilter filter_bluetooth=new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
                 registerReceiver(broad_cast_receiver, filter_bluetooth);
-
-               if(Test_bluetooth.test_bluetooth(BA)){
-                   indicator_bluetooth.setBackgroundResource(R.drawable.test_ok);
-               }
-               else{
-                   indicator_bluetooth.setBackgroundResource(R.drawable.test_fail);
-               }
-
+                Test_bluetooth.test_bluetooth(BA, indicator_bluetooth);
             }
         });
+
+        //Testing Wi-fi
 
         wifi_option.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,45 +145,26 @@ public class Main_activity extends Activity{
                 wifi = (WifiManager) getSystemService(Main_activity.WIFI_SERVICE);
                 IntentFilter filter_wifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
                 registerReceiver(broad_cast_receiver, filter_wifi);
-
-                if(Test_wifi.test_wifi(wifi)){
-                    indicator_wifi.setBackgroundResource(R.drawable.test_ok);
-                }
-                else{
-                    indicator_wifi.setBackgroundResource(R.drawable.test_fail);
-                }
+                Test_wifi.test_wifi(wifi, indicator_wifi);
             }
         });
+
+        //Testing Dual sim functionality
 
         dual_sim_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 telephonyInfo = TelephonyInfo.getInstance(Main_activity.this);
-                String result=Test_dualsim.test_dualsim(telephonyInfo);
-
-                switch(result){
-                    case "NOT_DUAL" : Toast.makeText(Main_activity.this,"Not a Dual sim phone",Toast.LENGTH_SHORT).show();
-                                      indicator_dual_sim.setBackgroundResource(R.drawable.test_fail);
-                                      break;
-
-                    case "SIM1_NOT_READY" : Toast.makeText(Main_activity.this,"Sim1 not ready",Toast.LENGTH_SHORT).show();
-                                            indicator_dual_sim.setBackgroundResource(R.drawable.test_fail);
-                                            break;
-
-                    case "SIM2_NOT_READY" : Toast.makeText(Main_activity.this,"Sim2 not ready",Toast.LENGTH_SHORT).show();
-                                            indicator_dual_sim.setBackgroundResource(R.drawable.test_fail);
-                                            break;
-
-                    case "BOTH_READY" : indicator_dual_sim.setBackgroundResource(R.drawable.test_ok);
-                                        break;
-
-                }
+                Test_dualsim.test_dualsim(Main_activity.this, telephonyInfo, indicator_dual_sim);
             }
         });
+
+        //Testing signal strength
 
         signal_strength_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                if(signalStrengthAsuLevel>6&&signalStrengthDbm>-97){
                    indicator_signal_strength.setBackgroundResource(R.drawable.test_ok);
                }
@@ -201,21 +175,18 @@ public class Main_activity extends Activity{
             }
         });
 
+        //Testing NFC
+
         nfc_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                manager = (NfcManager)Main_activity.this.getSystemService(Context.NFC_SERVICE);
+                manager = (NfcManager)Main_activity.this.getSystemService(Main_activity.NFC_SERVICE);
                 adapter = manager.getDefaultAdapter();
-                if(Test_nfc.test_nfc(adapter)){
-                    indicator_nfc.setBackgroundResource(R.drawable.test_ok);
-
-                }
-                else{
-                    indicator_nfc.setBackgroundResource(R.drawable.test_fail);
-                    Toast.makeText(Main_activity.this,"Device does not support NFC",Toast.LENGTH_SHORT).show();
-                }
+                Test_nfc.test_nfc(adapter, indicator_nfc, Main_activity.this);
             }
         });
+
+        //Testing headphone jack
 
         headphone_jack_option.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,95 +197,28 @@ public class Main_activity extends Activity{
             }
         });
 
+        //Checking basic apps
+
         basic_apps_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int app_count=0, mpi=0;
-                boolean isPackageExist;
-                String[] missing_packages=new String[8];
                 String[] package_names={getString(R.string.settings), getString(R.string.playstore), getString(R.string.google),getString(R.string.gmail), getString(R.string.google_maps), getString(R.string.calculator), getString(R.string.calendar), getString(R.string.messaging)};
                 List<ApplicationInfo> packages = Main_activity.this.getPackageManager().getInstalledApplications(0);
-                for(int i=0;i<8;i++){
-                    isPackageExist=false;
-                    for (ApplicationInfo packageInfo : packages) {
-                        if (package_names[i].equals(packageInfo.packageName)) {
-                            isPackageExist=true;
-                        }
-                    }
-                    if(isPackageExist){
-                        app_count++;
-                    }
-                    else{
-                        missing_packages[mpi]=package_names[i];
-                        mpi++;
-                    }
-                }
-                if(app_count==8)indicator_basic_apps.setBackgroundResource(R.drawable.test_ok);
-                else indicator_basic_apps.setBackgroundResource(R.drawable.test_fail);
+                String[] missing_packages=Test_basic_apps.test_basic_apps(package_names, packages, indicator_basic_apps);
             }
         });
+
+        //Testing speaker and microphone
 
         speaker_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 test_audio_file = MediaPlayer.create(Main_activity.this, R.raw.speaker_test);
                 audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-                int sampleRate = 8000;
-                bufferSize = AudioRecord.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
-                audio = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,5,0);
-
-                test_audio_file.start();
-                audio.startRecording();
-
-                j=0;
-                thread = new Thread(new Runnable() {
-                    public void run() {
-                        for(i=0;i<6;i++){
-                            try{Thread.sleep(2000);}catch(InterruptedException ie){ie.printStackTrace();}
-                            readAudioBuffer();//After this call we can get the last value assigned to the lastLevel variable
-
-                            runOnUiThread(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    audio_samples[j]=lastLevel;
-                                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,50,0);
-                                    j++;
-                                    if(i==5){
-                                        if(audio_samples[1]>=audio_samples[4]){
-                                        indicator_speaker.setBackgroundResource(R.drawable.test_ok);
-                                        }
-                                        else{
-                                         indicator_speaker.setBackgroundResource(R.drawable.test_ok);
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-                thread.start();
+                Test_speaker.test_speaker(test_audio_file, audioManager, Main_activity.this, indicator_speaker);
             }
         });
     }
-
-   private void readAudioBuffer() {
-        try {
-            short[] buffer = new short[bufferSize];
-            int bufferReadResult = 1;
-
-            if (audio != null) {
-                // Sense the voice…
-                bufferReadResult = audio.read(buffer, 0, bufferSize);
-                double sumLevel = 0;
-                for (int i = 0; i < bufferReadResult; i++)
-                { sumLevel += buffer[i]; }
-                lastLevel = Math.abs((sumLevel / bufferReadResult)); }
-        } catch (Exception e) { e.printStackTrace(); }
-   }
 }
 
 

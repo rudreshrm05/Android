@@ -2,6 +2,7 @@ package com.example.rudresh.tester;
 
 import android.app.Activity;
 import android.net.wifi.WifiManager;
+import android.widget.Button;
 
 /**
  * Created by Rudresh on 02-08-2018.
@@ -9,18 +10,19 @@ import android.net.wifi.WifiManager;
 
 public class Test_wifi extends Activity {
 
-  static boolean test_wifi(WifiManager wifi){
+   static void test_wifi(WifiManager wifi, Button indicator_wifi){
+
        if(wifi==null){
-           return false;
+           indicator_wifi.setBackgroundResource(R.drawable.test_fail);
        }
        else {
            wifi.setWifiEnabled(true);
+
            if (wifi.isWifiEnabled()) {
-               return true;
+               indicator_wifi.setBackgroundResource(R.drawable.test_ok);
            } else {
-               return false;
+               indicator_wifi.setBackgroundResource(R.drawable.test_fail);
            }
        }
     }
-
 }
