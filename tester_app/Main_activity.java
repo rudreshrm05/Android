@@ -168,22 +168,22 @@ public class Main_activity extends Activity{
                 telephonyInfo = TelephonyInfo.getInstance(Main_activity.this);
                 String result=Test_dualsim.test_dualsim(telephonyInfo);
 
-                if(result.equals("NOT_DUAL")){
-                    Toast.makeText(Main_activity.this,"Not a dual sim phone",Toast.LENGTH_LONG).show();
-                }
-                else{
-                    if(result.equals("SIM1_NOT_READY")){
-                        Toast.makeText(Main_activity.this,"Sim1 not ready",Toast.LENGTH_LONG).show();
-                    }
-                    if(result.equals("SIM2_NOT_READY")){
-                        Toast.makeText(Main_activity.this,"Sim2 not ready",Toast.LENGTH_LONG).show();
-                    }
-                    if(result.equals("BOTH_READY")){
-                        indicator_dual_sim.setBackgroundResource(R.drawable.test_ok);
-                    }
-                    else{
-                        indicator_dual_sim.setBackgroundResource(R.drawable.test_fail);
-                    }
+                switch(result){
+                    case "NOT_DUAL" : Toast.makeText(Main_activity.this,"Not a Dual sim phone",Toast.LENGTH_SHORT).show();
+                                      indicator_dual_sim.setBackgroundResource(R.drawable.test_fail);
+                                      break;
+
+                    case "SIM1_NOT_READY" : Toast.makeText(Main_activity.this,"Sim1 not ready",Toast.LENGTH_SHORT).show();
+                                            indicator_dual_sim.setBackgroundResource(R.drawable.test_fail);
+                                            break;
+
+                    case "SIM2_NOT_READY" : Toast.makeText(Main_activity.this,"Sim2 not ready",Toast.LENGTH_SHORT).show();
+                                            indicator_dual_sim.setBackgroundResource(R.drawable.test_fail);
+                                            break;
+
+                    case "BOTH_READY" : indicator_dual_sim.setBackgroundResource(R.drawable.test_ok);
+                                        break;
+
                 }
             }
         });
