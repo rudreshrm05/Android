@@ -295,13 +295,13 @@ public class Main_activity extends Activity{
                                     audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,50,0);
                                     j++;
                                     if(i==5){
-										if(audio_samples[1]>=audio_samples[4]){
-											indicator_speaker.setBackgroundResource(R.drawable.test_ok);
-										}
-										else{
-											indicator_speaker.setBackgroundResource(R.drawable.test_ok);
-										}
-									}
+                                        if(audio_samples[1]>=audio_samples[4]){
+                                        indicator_speaker.setBackgroundResource(R.drawable.test_ok);
+                                        }
+                                        else{
+                                         indicator_speaker.setBackgroundResource(R.drawable.test_ok);
+                                        }
+                                    }
                                 }
                             });
                         }
