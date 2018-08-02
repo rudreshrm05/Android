@@ -40,6 +40,8 @@ public class Main_activity extends Activity{
     LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option, headphone_jack_option, basic_apps_option, speaker_option;
     BluetoothAdapter BA;
     WifiManager wifi;
+    NfcManager manager;
+    NfcAdapter adapter;
     AudioManager audioManager;
     TelephonyInfo telephonyInfo;
     MediaPlayer test_audio_file;
@@ -50,6 +52,7 @@ public class Main_activity extends Activity{
     double lastLevel, audio_samples[]=new double[6];
     AudioRecord audio;
     Thread thread;
+    String results[];
 
     final BroadcastReceiver broad_cast_receiver=new BroadcastReceiver() {
         @Override
@@ -79,7 +82,6 @@ public class Main_activity extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
-        telephonyInfo = TelephonyInfo.getInstance(this);
         bluetooth_Option=(LinearLayout)findViewById(R.id.bluetooth_option);
         indicator_bluetooth=(Button)findViewById(R.id.indicator_bluetooth);
         wifi_option=(LinearLayout)findViewById(R.id.wifi_option);
@@ -96,6 +98,8 @@ public class Main_activity extends Activity{
         indicator_basic_apps=(Button)findViewById(R.id.indicator_basic_apps);
         speaker_option=(LinearLayout)findViewById(R.id.speaker_option);
         indicator_speaker=(Button)findViewById(R.id.indicator_speaker);
+
+
 
 
         final PhoneStateListener phone_state_listener=new PhoneStateListener(){
@@ -121,8 +125,8 @@ public class Main_activity extends Activity{
                 }
             }
 
-        };TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        telephonyManager.listen(phone_state_listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        }; TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+           telephonyManager.listen(phone_state_listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
         bluetooth_Option.setOnClickListener(new View.OnClickListener(){
 
@@ -131,17 +135,13 @@ public class Main_activity extends Activity{
                 BA = BluetoothAdapter.getDefaultAdapter();
                 IntentFilter filter_bluetooth=new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
                 registerReceiver(broad_cast_receiver, filter_bluetooth);
-                if(BA==null){
-                    indicator_bluetooth.setBackgroundResource(R.drawable.test_fail);
-                }
-                else {
-                    BA.enable();
-                    if (BA.isEnabled()) {
-                        indicator_bluetooth.setBackgroundResource(R.drawable.test_ok);
-                    } else {
-                        indicator_bluetooth.setBackgroundResource(R.drawable.test_fail);
-                    }
-                }
+
+               if(new Test_bluetooth().test_bluetooth(BA)){
+                   indicator_bluetooth.setBackgroundResource(R.drawable.test_ok);
+               }
+               else{
+                   indicator_bluetooth.setBackgroundResource(R.drawable.test_fail);
+               }
 
             }
         });
@@ -149,20 +149,15 @@ public class Main_activity extends Activity{
         wifi_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                wifi = (WifiManager) getSystemService(Main_activity.WIFI_SERVICE);
                 IntentFilter filter_wifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
                 registerReceiver(broad_cast_receiver, filter_wifi);
 
-                if(wifi==null){
-                    indicator_wifi.setBackgroundResource(R.drawable.test_fail);
+                if(new Test_wifi().test_wifi(wifi)){
+                    indicator_wifi.setBackgroundResource(R.drawable.test_ok);
                 }
-                else {
-                    wifi.setWifiEnabled(true);
-                    if (wifi.isWifiEnabled()) {
-                        indicator_wifi.setBackgroundResource(R.drawable.test_ok);
-                    } else {
-                        indicator_wifi.setBackgroundResource(R.drawable.test_fail);
-                    }
+                else{
+                    indicator_wifi.setBackgroundResource(R.drawable.test_fail);
                 }
             }
         });
@@ -170,27 +165,20 @@ public class Main_activity extends Activity{
         dual_sim_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean sim1_ready=false;
-                boolean sim2_ready=false;
+                telephonyInfo = TelephonyInfo.getInstance(Main_activity.this);
+                String result=new Test_dualsim().test_dualsim(telephonyInfo);
 
-                if(!telephonyInfo.isDualSIM()){
+                if(result.equals("NOT_DUAL")){
                     Toast.makeText(Main_activity.this,"Not a dual sim phone",Toast.LENGTH_LONG).show();
                 }
                 else{
-                    if(telephonyInfo.isSIM1Ready()){
-                        sim1_ready=true;
+                    if(result.equals("SIM1_NOT_READY")){
+                        Toast.makeText(Main_activity.this,"Sim1 not ready",Toast.LENGTH_LONG).show();
                     }
-                    else{
-                        Toast.makeText(Main_activity.this,"sim 1 not ready",Toast.LENGTH_LONG).show();
+                    if(result.equals("SIM2_NOT_READY")){
+                        Toast.makeText(Main_activity.this,"Sim2 not ready",Toast.LENGTH_LONG).show();
                     }
-                    if(telephonyInfo.isSIM2Ready()){
-                        sim2_ready=true;
-                    }
-                    else{
-                        Toast.makeText(Main_activity.this,"sim 2 not ready",Toast.LENGTH_LONG).show();
-                    }
-
-                    if(sim1_ready&&sim2_ready){
+                    if(result.equals("BOTH_READY")){
                         indicator_dual_sim.setBackgroundResource(R.drawable.test_ok);
                     }
                     else{
@@ -203,12 +191,12 @@ public class Main_activity extends Activity{
         signal_strength_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(signalStrengthDbm > -97 && signalStrengthAsuLevel > 6){
-                    indicator_signal_strength.setBackgroundResource(R.drawable.test_ok);
-                }
-                else{
-                    indicator_signal_strength.setBackgroundResource(R.drawable.test_fail);
-                }
+               if(signalStrengthAsuLevel>6&&signalStrengthDbm>-97){
+                   indicator_signal_strength.setBackgroundResource(R.drawable.test_ok);
+               }
+               else{
+                   indicator_signal_strength.setBackgroundResource(R.drawable.test_fail);
+               }
                 Toast.makeText(Main_activity.this,"dBm = "+signalStrengthDbm+"\n"+"asu = "+signalStrengthAsuLevel,Toast.LENGTH_SHORT).show();
             }
         });
@@ -216,14 +204,15 @@ public class Main_activity extends Activity{
         nfc_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NfcManager manager = (NfcManager)Main_activity.this.getSystemService(Context.NFC_SERVICE);
-                NfcAdapter adapter = manager.getDefaultAdapter();
-                if(adapter==null){
-                    indicator_nfc.setBackgroundResource(R.drawable.test_fail);
-                    Toast.makeText(Main_activity.this,"Device does not support NFC",Toast.LENGTH_SHORT).show();
+                manager = (NfcManager)Main_activity.this.getSystemService(Context.NFC_SERVICE);
+                adapter = manager.getDefaultAdapter();
+                if(new Test_nfc().test_nfc(adapter)){
+                    indicator_nfc.setBackgroundResource(R.drawable.test_ok);
+
                 }
                 else{
-                    indicator_nfc.setBackgroundResource(R.drawable.test_ok);
+                    indicator_nfc.setBackgroundResource(R.drawable.test_fail);
+                    Toast.makeText(Main_activity.this,"Device does not support NFC",Toast.LENGTH_SHORT).show();
                 }
             }
         });
