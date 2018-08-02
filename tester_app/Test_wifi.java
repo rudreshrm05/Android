@@ -9,7 +9,7 @@ import android.net.wifi.WifiManager;
 
 public class Test_wifi extends Activity {
 
-   boolean test_wifi(WifiManager wifi){
+  static boolean test_wifi(WifiManager wifi){
        if(wifi==null){
            return false;
        }

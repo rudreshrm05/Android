@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 public class Test_dualsim {
 
-    String test_dualsim(TelephonyInfo telephonyInfo){
+   static String test_dualsim(TelephonyInfo telephonyInfo){
         boolean sim1_ready=false;
         boolean sim2_ready=false;
 

@@ -136,7 +136,7 @@ public class Main_activity extends Activity{
                 IntentFilter filter_bluetooth=new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
                 registerReceiver(broad_cast_receiver, filter_bluetooth);
 
-               if(new Test_bluetooth().test_bluetooth(BA)){
+               if(Test_bluetooth.test_bluetooth(BA)){
                    indicator_bluetooth.setBackgroundResource(R.drawable.test_ok);
                }
                else{
@@ -153,7 +153,7 @@ public class Main_activity extends Activity{
                 IntentFilter filter_wifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
                 registerReceiver(broad_cast_receiver, filter_wifi);
 
-                if(new Test_wifi().test_wifi(wifi)){
+                if(Test_wifi.test_wifi(wifi)){
                     indicator_wifi.setBackgroundResource(R.drawable.test_ok);
                 }
                 else{
@@ -166,7 +166,7 @@ public class Main_activity extends Activity{
             @Override
             public void onClick(View v) {
                 telephonyInfo = TelephonyInfo.getInstance(Main_activity.this);
-                String result=new Test_dualsim().test_dualsim(telephonyInfo);
+                String result=Test_dualsim.test_dualsim(telephonyInfo);
 
                 if(result.equals("NOT_DUAL")){
                     Toast.makeText(Main_activity.this,"Not a dual sim phone",Toast.LENGTH_LONG).show();
@@ -206,7 +206,7 @@ public class Main_activity extends Activity{
             public void onClick(View v) {
                 manager = (NfcManager)Main_activity.this.getSystemService(Context.NFC_SERVICE);
                 adapter = manager.getDefaultAdapter();
-                if(new Test_nfc().test_nfc(adapter)){
+                if(Test_nfc.test_nfc(adapter)){
                     indicator_nfc.setBackgroundResource(R.drawable.test_ok);
 
                 }

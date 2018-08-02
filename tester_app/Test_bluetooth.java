@@ -8,7 +8,7 @@ import android.bluetooth.BluetoothAdapter;
 
 public class Test_bluetooth {
 
-    boolean test_bluetooth(BluetoothAdapter BA){
+    static boolean test_bluetooth(BluetoothAdapter BA){
         if(BA==null){
             return false;
         }

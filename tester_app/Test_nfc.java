@@ -7,7 +7,7 @@ import android.nfc.NfcAdapter;
  */
 
 public class Test_nfc {
-    boolean test_nfc(NfcAdapter adapter){
+    static boolean test_nfc(NfcAdapter adapter){
         if(adapter==null){
             return false;
         }
