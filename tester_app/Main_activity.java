@@ -28,8 +28,8 @@ import java.util.List;
 
 public class Main_activity extends Activity{
 
-    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength, indicator_nfc, indicator_headphone_jack, indicator_basic_apps, indicator_speaker;
-    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option, headphone_jack_option, basic_apps_option, speaker_option;
+    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength, indicator_nfc, indicator_headphone_jack, indicator_basic_apps, indicator_speaker, indicator_basic_apps_uninstallable;
+    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option, headphone_jack_option, basic_apps_option, speaker_option, basic_apps_uninstallable_option;
     BluetoothAdapter BA;
     WifiManager wifi;
     NfcManager manager;
@@ -39,6 +39,7 @@ public class Main_activity extends Activity{
     MediaPlayer test_audio_file;
     public int signalStrengthDbm = 0;
     public int signalStrengthAsuLevel = 0;
+
 
     //Broadcast receiver to receive intents
 
@@ -93,6 +94,8 @@ public class Main_activity extends Activity{
         indicator_basic_apps=(Button)findViewById(R.id.indicator_basic_apps);
         speaker_option=(LinearLayout)findViewById(R.id.speaker_option);
         indicator_speaker=(Button)findViewById(R.id.indicator_speaker);
+        basic_apps_uninstallable_option=(LinearLayout)findViewById(R.id.basic_apps_unistallable_option);
+        indicator_basic_apps_uninstallable=(Button)findViewById(R.id.indicator_basic_apps_uninstallable);
 
         //A phoneStateListener which listens signal changes and populate 'signalStrengthDbm' and 'signalStrengthAsuLevel'
 
@@ -202,8 +205,8 @@ public class Main_activity extends Activity{
         basic_apps_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String[] package_names={getString(R.string.settings), getString(R.string.playstore), getString(R.string.google),getString(R.string.gmail), getString(R.string.google_maps), getString(R.string.calculator), getString(R.string.calendar), getString(R.string.messaging)};
                 List<ApplicationInfo> packages = Main_activity.this.getPackageManager().getInstalledApplications(0);
+                String[] package_names={getString(R.string.settings), getString(R.string.playstore), getString(R.string.google),getString(R.string.gmail), getString(R.string.google_maps), getString(R.string.calculator), getString(R.string.calendar), getString(R.string.messaging)};
                 String[] missing_packages=Test_basic_apps.test_basic_apps(package_names, packages, indicator_basic_apps);
             }
         });
@@ -216,6 +219,17 @@ public class Main_activity extends Activity{
                 test_audio_file = MediaPlayer.create(Main_activity.this, R.raw.speaker_test);
                 audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
                 Test_speaker.test_speaker(test_audio_file, audioManager, Main_activity.this, indicator_speaker);
+            }
+        });
+
+        //Check whether user can uninstall basic apps
+
+        basic_apps_uninstallable_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<ApplicationInfo> packages = Main_activity.this.getPackageManager().getInstalledApplications(0);
+                String[] package_names={getString(R.string.settings), getString(R.string.playstore), getString(R.string.google),getString(R.string.gmail), getString(R.string.google_maps), getString(R.string.calculator), getString(R.string.calendar), getString(R.string.messaging)};
+                Test_basic_apps_uninstallable.test_basic_apps_uninstallable(Main_activity.this, package_names, packages, indicator_basic_apps_uninstallable);
             }
         });
     }
