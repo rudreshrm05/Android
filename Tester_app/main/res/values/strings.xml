@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Tester</string>
+    <string name="num_packages">8</string>
+    <string name="settings">com.android.settings</string>
+    <string name="playstore">com.android.vending</string>
+    <string name="google">com.google.android.googlequicksearchbox</string>
+    <string name="gmail">com.google.android.gm</string>
+    <string name="google_maps">com.google.android.apps.maps</string>
+    <string name="calculator">com.android.calculator2</string>
+    <string name="calendar">com.google.android.calendar</string>
+    <string name="messaging">com.android.messaging</string>
+</resources>
