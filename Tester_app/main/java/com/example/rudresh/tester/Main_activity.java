@@ -256,7 +256,6 @@ public class Main_activity extends Activity{
         check_imei_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try{
                 telephonyInfo = TelephonyInfo.getInstance(Main_activity.this);
                 sim1_IMEI=telephonyInfo.getImsiSIM1();
                 sim2_IMEI=telephonyInfo.getImsiSIM2();
@@ -278,8 +277,7 @@ public class Main_activity extends Activity{
                     }
                 });
                 builder.show();
-            }catch (Exception e){Toast.makeText(Main_activity.this,""+e,Toast.LENGTH_SHORT).show();
-                }}
+                }
         });
     }
 
