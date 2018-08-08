@@ -1,9 +1,11 @@
 package com.example.rudresh.tester;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
@@ -29,8 +31,8 @@ import java.util.List;
 
 public class Main_activity extends Activity{
 
-    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength, indicator_nfc, indicator_headphone_jack, indicator_basic_apps, indicator_speaker, indicator_basic_apps_uninstallable, indicator_check_engineermode;
-    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option, headphone_jack_option, basic_apps_option, speaker_option, basic_apps_uninstallable_option, check_engineermode_option;
+    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength, indicator_nfc, indicator_headphone_jack, indicator_basic_apps, indicator_speaker, indicator_basic_apps_uninstallable, indicator_check_engineermode, indicator_imei;
+    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option, headphone_jack_option, basic_apps_option, speaker_option, basic_apps_uninstallable_option, check_engineermode_option, check_imei_option;
     BluetoothAdapter BA;
     WifiManager wifi;
     NfcManager manager;
@@ -40,6 +42,7 @@ public class Main_activity extends Activity{
     MediaPlayer test_audio_file;
     public int signalStrengthDbm = 0;
     public int signalStrengthAsuLevel = 0;
+    static String sim1_IMEI=null, sim2_IMEI=null;
 
 
     //Broadcast receiver to receive intents
@@ -99,6 +102,8 @@ public class Main_activity extends Activity{
         indicator_basic_apps_uninstallable=(Button)findViewById(R.id.indicator_basic_apps_uninstallable);
         check_engineermode_option=(LinearLayout)findViewById(R.id.check_engineermode_option);
         indicator_check_engineermode=(Button)findViewById(R.id.indicator_check_engineermode);
+        check_imei_option=(LinearLayout)findViewById(R.id.check_imei_option);
+        indicator_imei=(Button)findViewById(R.id.indicator_check_imei);
 
         //A phoneStateListener which listens signal changes and populate 'signalStrengthDbm' and 'signalStrengthAsuLevel'
 
@@ -244,6 +249,37 @@ public class Main_activity extends Activity{
             public void onClick(View v) {
                 Test_check_EngineerMode_apk.check_engineermode_apk(Main_activity.this, indicator_check_engineermode);
             }
+        });
+
+        //check IMEI
+
+        check_imei_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try{
+                telephonyInfo = TelephonyInfo.getInstance(Main_activity.this);
+                sim1_IMEI=telephonyInfo.getImsiSIM1();
+                sim2_IMEI=telephonyInfo.getImsiSIM2();
+
+                if(sim1_IMEI==null || sim2_IMEI==null){
+                    indicator_imei.setBackgroundResource(R.drawable.test_fail);
+                }
+                else{
+                    indicator_imei.setBackgroundResource(R.drawable.test_ok);
+                }
+                AlertDialog.Builder builder=new AlertDialog.Builder(Main_activity.this);
+
+                builder.setCancelable(true);
+                builder.setTitle("IMEI number");
+                builder.setMessage("SIM1 : "+sim1_IMEI+"\n"+"SIM2 : "+sim2_IMEI);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+                builder.show();
+            }catch (Exception e){Toast.makeText(Main_activity.this,""+e,Toast.LENGTH_SHORT).show();
+                }}
         });
     }
 
