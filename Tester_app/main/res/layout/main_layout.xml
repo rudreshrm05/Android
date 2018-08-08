@@ -290,5 +290,36 @@
                 android:background="@color/black"
                 android:padding="10dp"/>
         </LinearLayout>
+
+
+        <!--Check for EngineerMode.apk-->
+
+        <LinearLayout
+            android:id="@+id/check_engineermode_option"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/black"
+            android:orientation="horizontal"
+            android:weightSum="100">
+
+            <TextView
+                android:id="@+id/text_check_engineermode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="200"
+                android:background="@color/black"
+                android:text="Check for EngineerMode.apk"
+                android:textColor="@color/white"
+                android:textSize="35dp"
+                android:layout_marginLeft="10dp"/>
+
+            <Button
+                android:id="@+id/indicator_check_engineermode"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@color/black"
+                android:padding="10dp"/>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

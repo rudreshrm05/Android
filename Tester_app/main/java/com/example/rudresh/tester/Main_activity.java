@@ -20,6 +20,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import java.io.File;
 import java.util.List;
 
 /**
@@ -28,8 +30,8 @@ import java.util.List;
 
 public class Main_activity extends Activity{
 
-    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength, indicator_nfc, indicator_headphone_jack, indicator_basic_apps, indicator_speaker, indicator_basic_apps_uninstallable;
-    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option, headphone_jack_option, basic_apps_option, speaker_option, basic_apps_uninstallable_option;
+    Button indicator_bluetooth, indicator_wifi, indicator_dual_sim, indicator_signal_strength, indicator_nfc, indicator_headphone_jack, indicator_basic_apps, indicator_speaker, indicator_basic_apps_uninstallable, indicator_check_engineermode;
+    LinearLayout bluetooth_Option, wifi_option, dual_sim_option, signal_strength_option, nfc_option, headphone_jack_option, basic_apps_option, speaker_option, basic_apps_uninstallable_option, check_engineermode_option;
     BluetoothAdapter BA;
     WifiManager wifi;
     NfcManager manager;
@@ -96,6 +98,8 @@ public class Main_activity extends Activity{
         indicator_speaker=(Button)findViewById(R.id.indicator_speaker);
         basic_apps_uninstallable_option=(LinearLayout)findViewById(R.id.basic_apps_unistallable_option);
         indicator_basic_apps_uninstallable=(Button)findViewById(R.id.indicator_basic_apps_uninstallable);
+        check_engineermode_option=(LinearLayout)findViewById(R.id.check_engineermode_option);
+        indicator_check_engineermode=(Button)findViewById(R.id.indicator_check_engineermode);
 
         //A phoneStateListener which listens signal changes and populate 'signalStrengthDbm' and 'signalStrengthAsuLevel'
 
@@ -232,6 +236,15 @@ public class Main_activity extends Activity{
                 List<ApplicationInfo> packages = Main_activity.this.getPackageManager().getInstalledApplications(0);
                 String[] package_names={getString(R.string.settings), getString(R.string.playstore), getString(R.string.google),getString(R.string.gmail), getString(R.string.google_maps), getString(R.string.calculator), getString(R.string.calendar), getString(R.string.messaging)};
                 Test_basic_apps_uninstallable.test_basic_apps_uninstallable(Main_activity.this, package_names, packages, indicator_basic_apps_uninstallable);
+            }
+        });
+
+        //Check for EngineerMode.apk
+
+        check_engineermode_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Check_EngineerMode_apk.check_engineermode_apk(Main_activity.this, indicator_check_engineermode);
             }
         });
     }
