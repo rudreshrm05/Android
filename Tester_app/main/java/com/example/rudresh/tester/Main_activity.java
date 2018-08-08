@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -141,7 +140,6 @@ public class Main_activity extends Activity{
                    Intent intent=new Intent(Main_activity.this, Test_bluetooth.class);
                 startActivity(intent);}catch(Exception e){
                    Toast.makeText(Main_activity.this,""+e,Toast.LENGTH_SHORT).show();
-
                }
             }
         });
@@ -244,7 +242,7 @@ public class Main_activity extends Activity{
         check_engineermode_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Check_EngineerMode_apk.check_engineermode_apk(Main_activity.this, indicator_check_engineermode);
+                Test_check_EngineerMode_apk.check_engineermode_apk(Main_activity.this, indicator_check_engineermode);
             }
         });
     }
