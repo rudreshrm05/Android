@@ -8,6 +8,8 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.widget.Button;
 
+import static java.lang.System.exit;
+
 /**
  * Created by Rudresh on 02-08-2018.
  */
@@ -19,14 +21,14 @@ public class Test_speaker {
     static double audio_samples[]=new double[6], lastLevel;
     static AudioRecord audio;
     static Thread thread;
-    static Activity activity;
+    static Activity act;
     static Button indicator_speaker;
 
-    static void test_speaker(MediaPlayer audio_file, AudioManager audio_Manager, Activity m, Button indicatorSpeaker) {
+    static void test_speaker(Activity activity, MediaPlayer audio_file, AudioManager audio_Manager, Button indicatorSpeaker) {
         int sampleRate = 8000;
         test_audio_file = audio_file;
         audioManager = audio_Manager;
-        activity = m;
+        act = activity;
         indicator_speaker = indicatorSpeaker;
         bufferSize = AudioRecord.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
         audio = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
@@ -46,7 +48,7 @@ public class Test_speaker {
                     }
                     readAudioBuffer();//After this call we can get the last value assigned to the lastLevel variable
 
-                    activity.runOnUiThread(new Runnable() {
+                    act.runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
@@ -58,8 +60,14 @@ public class Test_speaker {
 
                                 if (audio_samples[0]<audio_samples[5]) {
                                     indicator_speaker.setBackgroundResource(R.drawable.test_ok);
+                                    try{
+                                        Create_result_xml.create_result_xml(act, "TEST_SPEAKER_MICROPHONE", "PASS", "");
+                                    }catch(Exception e){exit(1);}
                                 } else {
                                     indicator_speaker.setBackgroundResource(R.drawable.test_fail);
+                                    try{
+                                        Create_result_xml.create_result_xml(act, "TEST_SPEAKER_MICROPHONE", "FAIL", "Defect in device or noisy environment");
+                                    }catch(Exception e){exit(1);}
                                 }
                             }
                         }

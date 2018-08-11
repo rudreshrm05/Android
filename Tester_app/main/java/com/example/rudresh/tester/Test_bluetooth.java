@@ -38,7 +38,7 @@ public class Test_bluetooth extends Activity {
     Button indicator_bluetooth_enable, indicator_bluetooth_pair, indicator_bluetooth_play;
     LinearLayout bluetooth_enable_option, bluetooth_pair_option, bluetooth_play_option;
     MediaPlayer music;
-    BluetoothDevice test_speaker;
+    BluetoothDevice test_speaker=null;
     boolean bluetooth_support=false, connection_status=false;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -64,6 +64,7 @@ public class Test_bluetooth extends Activity {
             if(action.equals(BluetoothDevice.ACTION_ACL_CONNECTED)){
                 if(action.equals(test_speaker.ACTION_ACL_CONNECTED)) {
                     indicator_bluetooth_pair.setBackgroundResource(R.drawable.test_ok);
+                    connection_status=true;
                 }
                 else{
                     Toast.makeText(Test_bluetooth.this,"connected to other device",Toast.LENGTH_SHORT).show();
@@ -89,7 +90,9 @@ public class Test_bluetooth extends Activity {
         if(bluetoothAdapter==null){
             indicator_bluetooth_enable.setBackgroundResource(R.drawable.test_fail);
             bluetooth_support=false;
-            Create_result_xml.setResult("BLUETOOTH_TEST", "FAIL");
+           try{
+               Create_result_xml.create_result_xml(Test_bluetooth.this, "TEST_BLUETOOTH", "FAIL", "Device does not support bluetooth");
+           }catch(Exception e){exit(1);}
         }
         else{
             bluetooth_support=true;
@@ -151,7 +154,7 @@ public class Test_bluetooth extends Activity {
 
                 if(bluetooth_support) {
 
-                    if(test_speaker!=null && "th3rocksmachine".equalsIgnoreCase(test_speaker.getName())) {
+                    if(test_speaker!=null && "th3rocksmachine".equalsIgnoreCase(test_speaker.getName()) && connection_status) {
                         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
                         registerReceiver(mReceiver, filter);
                         music = MediaPlayer.create(Test_bluetooth.this, R.raw.speaker_test);
@@ -168,7 +171,9 @@ public class Test_bluetooth extends Activity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 dialogInterface.cancel();
                                 indicator_bluetooth_play.setBackgroundResource(R.drawable.test_fail);
-                                Create_result_xml.setResult("BLUETOOTH_TEST", "FAIL");
+                                try{
+                                    Create_result_xml.create_result_xml(Test_bluetooth.this, "TEST_BLUETOOTH", "FAIL", "User could not hear the music through the bluetooth test speaker");
+                                }catch(Exception e){exit(1);}
                             }
                         });
 
@@ -176,12 +181,17 @@ public class Test_bluetooth extends Activity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 indicator_bluetooth_play.setBackgroundResource(R.drawable.test_ok);
-                                Create_result_xml.setResult("BLUETOOTH_TEST", "PASS");
+                                try{
+                                    Create_result_xml.create_result_xml(Test_bluetooth.this, "TEST_BLUETOOTH", "PASS", "");
+                                }catch(Exception e){exit(1);}
                             }
                         });
                         builder.show();
                     }
                     else{
+                        try{
+                            Create_result_xml.create_result_xml(Test_bluetooth.this, "TEST_BLUETOOTH", "FAIL", "Unable to establish connection with the device");
+                        }catch(Exception e){exit(1);}
                         AlertDialog.Builder builder=new AlertDialog.Builder(Test_bluetooth.this);
 
                         builder.setCancelable(true);

@@ -13,6 +13,7 @@ import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
@@ -21,7 +22,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.List;
+
+import static java.lang.System.exit;
 
 /**
  * Created by Rudresh on 25-07-2018.
@@ -29,7 +33,7 @@ import java.util.List;
 
 public class Main_activity extends Activity{
 
-    Button indicator_bluetooth, indicator_wifi, indicator_sim_functionality, indicator_signal_strength, indicator_nfc, indicator_headphone_jack, indicator_basic_apps, indicator_speaker, indicator_basic_apps_uninstallable, indicator_check_engineermode;
+    Button indicator_bluetooth, indicator_wifi, indicator_sim_functionality, indicator_signal_strength, indicator_nfc, indicator_headphone_jack, indicator_basic_apps, indicator_speaker, indicator_basic_apps_uninstallable, indicator_check_engineermode, button_log;
     LinearLayout bluetooth_Option, wifi_option, sim_functionality_option, signal_strength_option, nfc_option, headphone_jack_option, basic_apps_option, speaker_option, basic_apps_uninstallable_option, check_engineermode_option;
     WifiManager wifi;
     NfcManager manager;
@@ -67,6 +71,9 @@ public class Main_activity extends Activity{
 
                 if(intent.getIntExtra("state", 0) == 1){
                     indicator_headphone_jack.setBackgroundResource(R.drawable.test_ok);
+                    try{
+                        Create_result_xml.create_result_xml(Main_activity.this , "TEST_HEADPHONE_JACK", "PASS", "");
+                    }catch(Exception e){exit(1);}
                 }
             }
         }
@@ -97,6 +104,7 @@ public class Main_activity extends Activity{
         indicator_basic_apps_uninstallable=(Button)findViewById(R.id.indicator_basic_apps_uninstallable);
         check_engineermode_option=(LinearLayout)findViewById(R.id.check_engineermode_option);
         indicator_check_engineermode=(Button)findViewById(R.id.indicator_check_engineermode);
+        button_log=(Button)findViewById(R.id.log_button);
 
         //A phoneStateListener which listens signal changes and populate 'signalStrengthDbm' and 'signalStrengthAsuLevel'
 
@@ -128,6 +136,23 @@ public class Main_activity extends Activity{
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         telephonyManager.listen(phone_state_listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
+
+        File path = new File(getFilesDir().toString());
+        path.mkdirs();
+        File file=new File(path, "Test_result.xml");
+
+       if(file.exists()){
+           file.delete();
+       }
+           try {
+               file.createNewFile();
+            }
+            catch(Exception e){
+                Toast.makeText(Main_activity.this,""+e,Toast.LENGTH_SHORT).show();
+                exit(1);
+            }
+
+
         //Testing Bluetooth
 
         bluetooth_Option.setOnClickListener(new View.OnClickListener(){
@@ -147,7 +172,7 @@ public class Main_activity extends Activity{
                 wifi = (WifiManager) getSystemService(Main_activity.WIFI_SERVICE);
                 IntentFilter filter_wifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
                 registerReceiver(broad_cast_receiver, filter_wifi);
-                Test_wifi.test_wifi(wifi, indicator_wifi);
+                Test_wifi.test_wifi(Main_activity.this, wifi, indicator_wifi);
             }
         });
 
@@ -169,9 +194,15 @@ public class Main_activity extends Activity{
 
                if(signalStrengthAsuLevel>6&&signalStrengthDbm>-97){
                    indicator_signal_strength.setBackgroundResource(R.drawable.test_ok);
+                   try{
+                       Create_result_xml.create_result_xml(Main_activity.this, "TEST_SIGNAL_STRENGTH", "PASS","");
+                   }catch(Exception e){exit(1);}
                }
                else{
                    indicator_signal_strength.setBackgroundResource(R.drawable.test_fail);
+                   try{
+                       Create_result_xml.create_result_xml(Main_activity.this, "TEST_SIGNAL_STRENGTH", "FAIL","Signal strength low");
+                   }catch(Exception e){exit(1);}
                }
                 Toast.makeText(Main_activity.this,"dBm = "+signalStrengthDbm+"\n"+"asu = "+signalStrengthAsuLevel,Toast.LENGTH_SHORT).show();
             }
@@ -184,7 +215,7 @@ public class Main_activity extends Activity{
             public void onClick(View v) {
                 manager = (NfcManager)Main_activity.this.getSystemService(Main_activity.NFC_SERVICE);
                 adapter = manager.getDefaultAdapter();
-                Test_nfc.test_nfc(adapter, indicator_nfc, Main_activity.this);
+                Test_nfc.test_nfc(Main_activity.this, adapter, indicator_nfc);
             }
         });
 
@@ -206,7 +237,7 @@ public class Main_activity extends Activity{
             public void onClick(View v) {
                 List<ApplicationInfo> packages = Main_activity.this.getPackageManager().getInstalledApplications(0);
                 String[] package_names={getString(R.string.settings), getString(R.string.playstore), getString(R.string.google),getString(R.string.gmail), getString(R.string.google_maps), getString(R.string.calculator), getString(R.string.calendar), getString(R.string.messaging)};
-                String[] missing_packages=Test_basic_apps.test_basic_apps(package_names, packages, indicator_basic_apps);
+                Test_basic_apps.test_basic_apps(Main_activity.this, package_names, packages, indicator_basic_apps);
             }
         });
 
@@ -217,7 +248,7 @@ public class Main_activity extends Activity{
             public void onClick(View v) {
                 test_audio_file = MediaPlayer.create(Main_activity.this, R.raw.speaker_test);
                 audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                Test_speaker.test_speaker(test_audio_file, audioManager, Main_activity.this, indicator_speaker);
+                Test_speaker.test_speaker(Main_activity.this, test_audio_file, audioManager, indicator_speaker);
             }
         });
 
@@ -240,6 +271,14 @@ public class Main_activity extends Activity{
                 Test_check_EngineerMode_apk.check_engineermode_apk(Main_activity.this, indicator_check_engineermode);
             }
         });
+
+        button_log.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Main_activity.this, Display_log.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -250,6 +289,12 @@ public class Main_activity extends Activity{
 
         else if("FAIL".equals(Create_result_xml.RESULT_TEST_BLUETOOTH))
             indicator_bluetooth.setBackgroundResource(R.drawable.test_fail);
+
+        if("PASS".equals(Create_result_xml.RESULT_TEST_SIM_FUNCTIONALITY))
+            indicator_sim_functionality.setBackgroundResource(R.drawable.test_ok);
+
+        else if("FAIL".equals(Create_result_xml.RESULT_TEST_SIM_FUNCTIONALITY))
+            indicator_sim_functionality.setBackgroundResource(R.drawable.test_fail);
     }
 }
 
