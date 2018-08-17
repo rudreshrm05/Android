@@ -38,7 +38,28 @@ import static java.lang.System.exit;
 
 public class Main_activity extends Activity{
 
-    Button indicator_bluetooth, indicator_wifi, indicator_sim_functionality, indicator_signal_strength, indicator_nfc, indicator_headphone_jack, indicator_basic_apps, indicator_speaker, indicator_basic_apps_uninstallable, indicator_check_engineermode, button_log;
+    Button indicator_bluetooth,
+           indicator_wifi,
+           indicator_sim_functionality,
+           indicator_signal_strength,
+           indicator_nfc,
+           indicator_headphone_jack,
+           indicator_basic_apps,
+           indicator_speaker,
+           indicator_basic_apps_uninstallable,
+           indicator_check_engineermode,
+           button_log,
+           help_bluetooth,
+           help_wifi,
+           help_sim_functionality,
+           help_signal_strength,
+           help_nfc,
+           help_headphone_jack,
+           help_basic_apps,
+           help_speaker,
+           help_basic_apps_uninstallable,
+           help_check_engineermode;
+
     LinearLayout bluetooth_Option, wifi_option, sim_functionality_option, signal_strength_option, nfc_option, headphone_jack_option, basic_apps_option, speaker_option, basic_apps_uninstallable_option, check_engineermode_option;
     WifiManager wifi;
     NfcManager manager;
@@ -138,6 +159,17 @@ public class Main_activity extends Activity{
         check_engineermode_option=(LinearLayout)findViewById(R.id.check_engineermode_option);
         indicator_check_engineermode=(Button)findViewById(R.id.indicator_check_engineermode);
         button_log=(Button)findViewById(R.id.log_button);
+        help_bluetooth=(Button)findViewById(R.id.help_bluetooth);
+        help_basic_apps=(Button)findViewById(R.id.help_basic_apps);
+        help_basic_apps_uninstallable=(Button)findViewById(R.id.help_basic_apps_uninstallable);
+        help_signal_strength=(Button)findViewById(R.id.help_signal_strength);
+        help_sim_functionality=(Button)findViewById(R.id.help_sim_functionality);
+        help_wifi=(Button)findViewById(R.id.help_wifi);
+        help_nfc=(Button)findViewById(R.id.help_nfc);
+        help_check_engineermode=(Button)findViewById(R.id.help_check_engineermode);
+        help_speaker=(Button)findViewById(R.id.help_speaker);
+        help_headphone_jack=(Button)findViewById(R.id.help_headphone_jack);
+
 
         //A phoneStateListener which listens signal changes and populate 'signalStrengthDbm' and 'signalStrengthAsuLevel'
 
@@ -310,6 +342,91 @@ public class Main_activity extends Activity{
                 startActivity(intent);
             }
         });
+
+        help_bluetooth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                display_help(Main_activity.this, "Test Bluetooth", "Tests the bluetooth functionality of the device by enabling, disabling, paring and playing music through a bluetooth speaker.\nA bluetooth speaker with the name 'TEST_SPEAKER' is required");
+            }
+        });
+
+        help_wifi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                display_help(Main_activity.this, "Test WiFi", "Test the WiFi functionality of the device by enabling and disabling the WiFi");
+            }
+        });
+
+        help_sim_functionality.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                display_help(Main_activity.this, "Test SIM functionality ", "Tests whether the SIM card(s) catches signal and also checks the IMEI");
+            }
+        });
+
+        help_signal_strength.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                display_help(Main_activity.this, "Test signal strength ", "Checks the signal strength");
+            }
+        });
+
+        help_nfc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                display_help(Main_activity.this, "Test NFC", "Tests whether the device supports NFC or not");
+            }
+        });
+
+        help_headphone_jack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                display_help(Main_activity.this, "Test Headphone Jack ", "Test the Hedphone jack of the device for its functionality");
+            }
+        });
+
+        help_basic_apps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                display_help(Main_activity.this, "Test Basic apps ", "1. Playstore\n2. Settings\n3. Google\n4. Google maps\n5. Gmail\n6. Messaging\n7. Calendar\n8. Calculator");
+            }
+        });
+
+        help_basic_apps_uninstallable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                display_help(Main_activity.this, "Test Basic apps uninstallable", "Test whether the basic apps can be uninstalled or not");
+            }
+        });
+
+        help_speaker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                display_help(Main_activity.this, "Test speaker/Microphone ", "Test the speaker and the Microphone of the device by playing a music with low and high volume.\nSilence is required while testing");
+            }
+        });
+
+        help_check_engineermode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                display_help(Main_activity.this, "Check EngineerMod.apk ", "Checks whether the EngineerMod.apk is present on the device or not");
+            }
+        });
+    }
+
+    static void display_help(Activity activity, String title, String content){
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage(content);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        builder.show();
     }
 
     @Override

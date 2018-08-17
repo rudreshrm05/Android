@@ -10,17 +10,17 @@
         android:background="@color/material_grey_900"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="TESTER"
-            android:textColor="@color/colorAccent"
-            android:textSize="40dp"
-            android:fontFamily="serif"
-            android:layout_gravity="center"
-            android:background="@color/black"
-            android:textAlignment="center"
-            android:textStyle="bold"/>
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="TESTER"
+                android:textColor="@color/colorAccent"
+                android:textSize="40dp"
+                android:fontFamily="serif"
+                android:layout_gravity="center"
+                android:background="@color/black"
+                android:textAlignment="center"
+                android:textStyle="bold"/>
 
         <!-- Bluetooth test option -->
         <LinearLayout
@@ -29,14 +29,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:background="@color/black"
-            android:orientation="horizontal"
-            android:weightSum="100">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_option1"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="90"
                 android:background="@color/black"
                 android:text="Bluetooth"
                 android:textColor="@color/white"
@@ -49,6 +47,14 @@
                 android:layout_height="25dp"
                 android:background="@color/black"
                 android:padding="10dp" />
+
+            <Button
+                android:id="@+id/help_bluetooth"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/help"
+                android:padding="10dp" />
         </LinearLayout>
 
         <!-- wifi option -->
@@ -59,14 +65,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@color/black"
-            android:orientation="horizontal"
-            android:weightSum="100">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_wifi"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="93"
                 android:background="@color/black"
                 android:text="WiFi"
                 android:textColor="@color/white"
@@ -79,6 +83,14 @@
                 android:layout_height="25dp"
                 android:background="@color/black"
                 android:padding="10dp"/>
+
+            <Button
+                android:id="@+id/help_wifi"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/help"
+                android:padding="10dp" />
         </LinearLayout>
 
         <!--Sim functionality option -->
@@ -89,14 +101,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@color/black"
-            android:orientation="horizontal"
-            android:weightSum="100">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_sim_functionality"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="91"
                 android:background="@color/black"
                 android:text="Sim functionality"
                 android:textColor="@color/white"
@@ -109,6 +119,14 @@
                 android:layout_height="25dp"
                 android:background="@color/black"
                 android:padding="10dp"/>
+
+            <Button
+                android:id="@+id/help_sim_functionality"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/help"
+                android:padding="10dp" />
         </LinearLayout>
 
         <!--signal Strength option-->
@@ -119,14 +137,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@color/black"
-            android:orientation="horizontal"
-            android:weightSum="100">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_signal_strength"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="85"
                 android:background="@color/black"
                 android:text="Signal strength"
                 android:textColor="@color/white"
@@ -139,6 +155,14 @@
                 android:layout_height="25dp"
                 android:background="@color/black"
                 android:padding="10dp"/>
+
+            <Button
+                android:id="@+id/help_signal_strength"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/help"
+                android:padding="10dp" />
         </LinearLayout>
 
         <!--NFC option-->
@@ -149,14 +173,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@color/black"
-            android:orientation="horizontal"
-            android:weightSum="100">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_nfc"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="93"
                 android:background="@color/black"
                 android:text="NFC"
                 android:textColor="@color/white"
@@ -169,6 +191,14 @@
                 android:layout_height="25dp"
                 android:background="@color/black"
                 android:padding="10dp"/>
+
+            <Button
+                android:id="@+id/help_nfc"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/help"
+                android:padding="10dp" />
         </LinearLayout>
 
         <!--Headphone jack option-->
@@ -179,14 +209,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@color/black"
-            android:orientation="horizontal"
-            android:weightSum="100">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_headphone_jack"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="84"
                 android:background="@color/black"
                 android:text="Headphone jack"
                 android:textColor="@color/white"
@@ -199,6 +227,14 @@
                 android:layout_height="25dp"
                 android:background="@color/black"
                 android:padding="10dp"/>
+
+            <Button
+                android:id="@+id/help_headphone_jack"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/help"
+                android:padding="10dp" />
         </LinearLayout>
 
         <!--Basic apps option-->
@@ -209,14 +245,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@color/black"
-            android:orientation="horizontal"
-            android:weightSum="100">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_basic_apps"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="90"
                 android:background="@color/black"
                 android:text="Basic apps"
                 android:textColor="@color/white"
@@ -229,6 +263,14 @@
                 android:layout_height="25dp"
                 android:background="@color/black"
                 android:padding="10dp"/>
+
+            <Button
+                android:id="@+id/help_basic_apps"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/help"
+                android:padding="10dp" />
         </LinearLayout>
 
         <!--Speaker option-->
@@ -239,14 +281,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@color/black"
-            android:orientation="horizontal"
-            android:weightSum="100">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_speaker"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="60"
                 android:background="@color/black"
                 android:text="Speaker/Microphone"
                 android:textColor="@color/white"
@@ -259,6 +299,14 @@
                 android:layout_height="25dp"
                 android:background="@color/black"
                 android:padding="10dp"/>
+
+            <Button
+                android:id="@+id/help_speaker"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/help"
+                android:padding="10dp" />
         </LinearLayout>
 
         <!--Basic apps uninstall status-->
@@ -269,14 +317,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@color/black"
-            android:orientation="horizontal"
-            android:weightSum="100">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_basic_apps_uninstallable"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="200"
                 android:background="@color/black"
                 android:text="Basic apps uninstallable?"
                 android:textColor="@color/white"
@@ -289,6 +335,14 @@
                 android:layout_height="25dp"
                 android:background="@color/black"
                 android:padding="10dp"/>
+
+            <Button
+                android:id="@+id/help_basic_apps_uninstallable"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/help"
+                android:padding="10dp" />
         </LinearLayout>
 
 
@@ -300,14 +354,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@color/black"
-            android:orientation="horizontal"
-            android:weightSum="100">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/text_check_engineermode"
-                android:layout_width="wrap_content"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="170"
                 android:background="@color/black"
                 android:text="Check for EngineerMode.apk"
                 android:textColor="@color/white"
@@ -320,6 +372,25 @@
                 android:layout_height="25dp"
                 android:background="@color/black"
                 android:padding="10dp"/>
+
+            <Button
+                android:id="@+id/help_check_engineermode"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/help"
+                android:padding="10dp" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/log_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/black"
+            android:text="LOG"
+            android:textSize="20dp"
+            android:textColor="@color/white"
+            android:layout_marginTop="5dp"/>
     </LinearLayout>
 </ScrollView>
