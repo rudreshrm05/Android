@@ -72,8 +72,6 @@ public class Test_bluetooth extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_bluetooth);
 
-        Create_logCat.create_logCat("TestBluetooth", getString(R.string.Tester_logdir_path));
-
         bluetooth_enable_option=(LinearLayout)findViewById(R.id.bluetooth_enable_option);
         indicator_bluetooth_enable=(Button)findViewById(R.id.indicator_bluetooth_enable);
         bluetooth_pair_option=(LinearLayout)findViewById(R.id.bluetooth_pair_option);
@@ -114,6 +112,8 @@ public class Test_bluetooth extends Activity {
             @Override
             public void onClick(View v) {
 
+                Create_logCat.create_logCat("TestBluetoothEnable", getString(R.string.Tester_logdir_path));
+
                 if(bluetoothAdapter.isEnabled()){
                     indicator_bluetooth_enable.setBackgroundResource(R.drawable.test_ok);
                 }
@@ -133,6 +133,9 @@ public class Test_bluetooth extends Activity {
         bluetooth_disable_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Create_logCat.create_logCat("TestBluetoothDisable", getString(R.string.Tester_logdir_path));
+
                 if(!bluetoothAdapter.isEnabled()){
                     indicator_bluetooth_disable.setBackgroundResource(R.drawable.test_ok);
                 }
@@ -145,6 +148,9 @@ public class Test_bluetooth extends Activity {
         bluetooth_pair_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Create_logCat.create_logCat("TestBluetoothPair", getString(R.string.Tester_logdir_path));
+
                 if(bluetooth_support) {
                     filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
                     filter.addAction(BluetoothDevice.ACTION_FOUND);
@@ -188,6 +194,8 @@ public class Test_bluetooth extends Activity {
         bluetooth_play_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Create_logCat.create_logCat("TestBluetoothPlay", getString(R.string.Tester_logdir_path));
 
                 if(bluetooth_support) {
                     if(isPaired()) {
