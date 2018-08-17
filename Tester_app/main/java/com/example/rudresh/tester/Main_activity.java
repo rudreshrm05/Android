@@ -94,6 +94,25 @@ public class Main_activity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
 
+        File logDirectory = new File(getString(R.string.Tester_logdir_path));
+        File logFile = new File(logDirectory, "logcat" +"Tester"+ ".txt");
+
+        // create log folder
+        if (!logDirectory.exists()) {
+            logDirectory.mkdir();
+        }
+        if(logFile.exists()){
+            logFile.delete();
+        }
+
+        // clear the previous logcat and then write the new one to the file
+        try {
+           Process process = Runtime.getRuntime().exec("logcat -c");
+            process = Runtime.getRuntime().exec("logcat -f " + logFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         bluetooth_Option=(LinearLayout)findViewById(R.id.bluetooth_option);
         indicator_bluetooth=(Button)findViewById(R.id.indicator_bluetooth);
         wifi_option=(LinearLayout)findViewById(R.id.wifi_option);
