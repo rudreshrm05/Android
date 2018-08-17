@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -69,6 +71,8 @@ public class Test_bluetooth extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_bluetooth);
+
+        Create_logCat.create_logCat("TestBluetooth", getString(R.string.Tester_logdir_path));
 
         bluetooth_enable_option=(LinearLayout)findViewById(R.id.bluetooth_enable_option);
         indicator_bluetooth_enable=(Button)findViewById(R.id.indicator_bluetooth_enable);
@@ -253,10 +257,6 @@ public class Test_bluetooth extends Activity {
         else{
             return  false;
         }
-    }
-
-    static void setPair_fail(){
-        indicator_bluetooth_pair.setBackgroundResource(R.drawable.test_fail);
     }
 }
 

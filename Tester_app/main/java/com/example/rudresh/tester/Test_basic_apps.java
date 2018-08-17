@@ -13,9 +13,13 @@ import static java.lang.System.exit;
 
 public class Test_basic_apps{
     static void test_basic_apps(Activity activity, String[] package_names, List<ApplicationInfo> packages, Button indicator_basic_apps){
+
+        Create_logCat.create_logCat("basicApps", activity.getString(R.string.Tester_logdir_path));
+
         int app_count=0, mpi=0;
         boolean isPackageExist;
         String[] missing_packages=new String[8];
+        String missing_pkgs="";
 
         for(int i=0;i<8;i++){
             isPackageExist=false;
@@ -36,6 +40,10 @@ public class Test_basic_apps{
                     }
         }
 
+        for(int i=0; missing_packages[i]!=null; i++){
+            missing_pkgs+=" "+missing_packages[i];
+        }
+
         if(app_count==8){
             indicator_basic_apps.setBackgroundResource(R.drawable.test_ok);
                 try{
@@ -45,7 +53,7 @@ public class Test_basic_apps{
         else {
             indicator_basic_apps.setBackgroundResource(R.drawable.test_fail);
             try{
-                Create_result_xml.create_result_xml(activity, "TEST_BASIC_APPS", "FAIL", "Missing packages:"+missing_packages);
+                Create_result_xml.create_result_xml(activity, "TEST_BASIC_APPS", "FAIL", "Missing packages:"+missing_pkgs);
             }catch(Exception e){exit(1);}
             }
     }

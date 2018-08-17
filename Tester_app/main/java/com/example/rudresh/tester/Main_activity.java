@@ -45,8 +45,8 @@ public class Main_activity extends Activity{
     NfcAdapter adapter;
     AudioManager audioManager;
     MediaPlayer test_audio_file;
-    public int signalStrengthDbm = 0;
-    public int signalStrengthAsuLevel = 0;
+    static public int signalStrengthDbm = 0;
+    static public int signalStrengthAsuLevel = 0;
     static boolean WIFI_ON=false, WIFI_OFF=false;
     File logDirectory ;
     File logFile;
@@ -220,35 +220,7 @@ public class Main_activity extends Activity{
         signal_strength_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String dialogMessage="";
-               if(signalStrengthAsuLevel>MIN_ASU&&signalStrengthDbm>MIN_DBM){
-                   indicator_signal_strength.setBackgroundResource(R.drawable.test_ok);
-                  dialogMessage="Dbm : "+signalStrengthDbm+"\n"+"Asu : "+signalStrengthAsuLevel;
-                   try{
-                       Create_result_xml.create_result_xml(Main_activity.this, "TEST_SIGNAL_STRENGTH", "PASS","");
-                   }catch(Exception e){exit(1);}
-               }
-               else{
-                   indicator_signal_strength.setBackgroundResource(R.drawable.test_fail);
-                   dialogMessage="Dbm : "+signalStrengthDbm+"\n"+"Asu : "+signalStrengthAsuLevel+"\n"+"Low signal strength(<6 asu and <-97 dbm)";
-                   try{
-                       Create_result_xml.create_result_xml(Main_activity.this, "TEST_SIGNAL_STRENGTH", "FAIL","Signal strength low");
-                   }catch(Exception e){exit(1);}
-               }
-
-                AlertDialog.Builder builder=new AlertDialog.Builder(Main_activity.this);
-
-                builder.setCancelable(true);
-                builder.setTitle("Signal strength");
-
-                builder.setMessage(dialogMessage);
-
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                });
-                builder.show();
+                Test_signal_strength.test_signal_strength(Main_activity.this, indicator_signal_strength);
             }
         });
 
@@ -268,6 +240,9 @@ public class Main_activity extends Activity{
         headphone_jack_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Create_logCat.create_logCat("HeadPhoneJack", getString(R.string.Tester_logdir_path));
+
                 IntentFilter filter_headset = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
                 registerReceiver(broad_cast_receiver, filter_headset);
                 indicator_headphone_jack.setBackgroundResource(R.drawable.test_fail);

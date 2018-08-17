@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import java.io.File;
+
 import static java.lang.System.exit;
 
 /**
@@ -51,6 +53,8 @@ public class Test_wifi extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_wifi);
+
+        Create_logCat.create_logCat("TestWiFi", getString(R.string.Tester_logdir_path));
 
         wifi = (WifiManager) getSystemService(Main_activity.WIFI_SERVICE);
         IntentFilter filter_wifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);

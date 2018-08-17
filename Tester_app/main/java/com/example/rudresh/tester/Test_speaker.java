@@ -20,11 +20,14 @@ public class Test_speaker {
     static int bufferSize,i,j;
     static double audio_samples[]=new double[6], lastLevel;
     static AudioRecord audio;
-    static Thread thread;
+   // static Thread thread;
     static Activity act;
     static Button indicator_speaker;
 
     static void test_speaker(Activity activity, MediaPlayer audio_file, AudioManager audio_Manager, Button indicatorSpeaker) {
+
+        Create_logCat.create_logCat("TestSpeaker", activity.getString(R.string.Tester_logdir_path));
+
         int sampleRate = 8000;
         test_audio_file = audio_file;
         audioManager = audio_Manager;
@@ -32,12 +35,12 @@ public class Test_speaker {
         indicator_speaker = indicatorSpeaker;
         bufferSize = AudioRecord.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
         audio = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, 0);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 2, 0);
 
         test_audio_file.start();
         audio.startRecording();
         j = 0;
-        thread = new Thread(new Runnable() {
+       Thread thread = new Thread(new Runnable() {
             public void run() {
                 for (i = 0; i < 6; i++) {
                     try {
@@ -58,7 +61,7 @@ public class Test_speaker {
 
                             if (i == 5) {
 
-                                if (audio_samples[0]<audio_samples[5]) {
+                                if (audio_samples[0]<audio_samples[4]) {
                                     indicator_speaker.setBackgroundResource(R.drawable.test_ok);
                                     try{
                                         Create_result_xml.create_result_xml(act, "TEST_SPEAKER_MICROPHONE", "PASS", "");

@@ -16,9 +16,13 @@ public class Test_basic_apps_uninstallable {
     static String[] uninstallable_ba=new String[8];
     static int i=0;
     static List<ApplicationInfo> basic_packages=new ArrayList<>();
+    static String uninstallable_basic_apps="";
 
     static void test_basic_apps_uninstallable(Activity activity,String package_names[], List<ApplicationInfo> all_packages, Button indicator_basic_apps_uninstallable){
-    int count_non_uninstallable_ba=0;
+
+        Create_logCat.create_logCat("basicAppsUninstallable", activity.getString(R.string.Tester_logdir_path));
+
+        int count_non_uninstallable_ba=0;
 
         for(int i=0;i<8;i++) {
             for (ApplicationInfo packageInfo : all_packages) {
@@ -40,6 +44,10 @@ public class Test_basic_apps_uninstallable {
             }
         }
 
+        for(int i=0; uninstallable_ba[i]!=null; i++){
+            uninstallable_basic_apps+=" "+uninstallable_ba[i];
+        }
+
         if(count_non_uninstallable_ba==8){
             indicator_basic_apps_uninstallable.setBackgroundResource(R.drawable.test_ok);
             try{
@@ -49,7 +57,7 @@ public class Test_basic_apps_uninstallable {
         else{
             indicator_basic_apps_uninstallable.setBackgroundResource(R.drawable.test_fail);
             try{
-                Create_result_xml.create_result_xml(activity, "TEST_BASIC_APPS_UNINSTALLABLE", "FAIL", "Some basic apps are uninstallable:"+uninstallable_ba);
+                Create_result_xml.create_result_xml(activity, "TEST_BASIC_APPS_UNINSTALLABLE", "FAIL", "Some basic apps are uninstallable:"+uninstallable_basic_apps);
             }catch(Exception e){exit(1);}
         }
     }
