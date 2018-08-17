@@ -48,6 +48,10 @@ public class Main_activity extends Activity{
     public int signalStrengthDbm = 0;
     public int signalStrengthAsuLevel = 0;
     static boolean WIFI_ON=false, WIFI_OFF=false;
+    File logDirectory ;
+    File logFile;
+    Process process;
+    final int MIN_ASU=6, MIN_DBM=-97;
 
 
     //Broadcast receiver to receive intents
@@ -94,8 +98,8 @@ public class Main_activity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
 
-        File logDirectory = new File(getString(R.string.Tester_logdir_path));
-        File logFile = new File(logDirectory, "logcat" +"Tester"+ ".txt");
+        logDirectory = new File(getString(R.string.Tester_logdir_path));
+        logFile = new File(logDirectory, "logcat" +"Tester"+ ".txt");
 
         // create log folder
         if (!logDirectory.exists()) {
@@ -107,7 +111,7 @@ public class Main_activity extends Activity{
 
         // clear the previous logcat and then write the new one to the file
         try {
-           Process process = Runtime.getRuntime().exec("logcat -c");
+           process = Runtime.getRuntime().exec("logcat -c");
             process = Runtime.getRuntime().exec("logcat -f " + logFile);
         } catch (Exception e) {
             e.printStackTrace();
@@ -217,7 +221,7 @@ public class Main_activity extends Activity{
             @Override
             public void onClick(View v) {
                 String dialogMessage="";
-               if(signalStrengthAsuLevel>6&&signalStrengthDbm>-97){
+               if(signalStrengthAsuLevel>MIN_ASU&&signalStrengthDbm>MIN_DBM){
                    indicator_signal_strength.setBackgroundResource(R.drawable.test_ok);
                   dialogMessage="Dbm : "+signalStrengthDbm+"\n"+"Asu : "+signalStrengthAsuLevel;
                    try{
@@ -353,6 +357,11 @@ public class Main_activity extends Activity{
 
         else if("FAIL".equals(Create_result_xml.RESULT_TEST_WIFI))
             indicator_wifi.setBackgroundResource(R.drawable.test_fail);
+        try {
+            process = Runtime.getRuntime().exec("logcat -f " + logFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
