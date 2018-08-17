@@ -13,14 +13,9 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -33,13 +28,13 @@ import static java.lang.System.exit;
 
 public class Test_bluetooth extends Activity {
 
-    BluetoothAdapter bluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
+    static BluetoothAdapter bluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
     IntentFilter filter =new IntentFilter();
-    Button indicator_bluetooth_enable, indicator_bluetooth_pair, indicator_bluetooth_play;
-    LinearLayout bluetooth_enable_option, bluetooth_pair_option, bluetooth_play_option;
+    static Button indicator_bluetooth_enable, indicator_bluetooth_pair, indicator_bluetooth_play, indicator_bluetooth_disable;
+    LinearLayout bluetooth_enable_option, bluetooth_pair_option, bluetooth_play_option, bluetooth_disable_option;
     MediaPlayer music;
-    BluetoothDevice test_speaker=null;
-    boolean bluetooth_support=false, connection_status=false;
+    static boolean bluetooth_support=false;
+    static String device_name="TEST_SPEAKER";
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -48,26 +43,24 @@ public class Test_bluetooth extends Activity {
             if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
 
-                if(state==BluetoothAdapter.STATE_ON){
+                if(state==BluetoothAdapter.STATE_ON || state==BluetoothAdapter.STATE_TURNING_ON){
                     indicator_bluetooth_enable.setBackgroundResource(R.drawable.test_ok);
+                }
+                if(state==BluetoothAdapter.STATE_OFF || state==BluetoothAdapter.STATE_TURNING_OFF){
+                    indicator_bluetooth_disable.setBackgroundResource(R.drawable.test_ok);
                 }
             }
 
             if (action.equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if(device.getName().equalsIgnoreCase("th3rocksmachine")){
+                if(device.getName().equalsIgnoreCase(device_name)){
                     device.createBond();
-                    test_speaker=device;
                 }
             }
 
             if(action.equals(BluetoothDevice.ACTION_ACL_CONNECTED)){
-                if(action.equals(test_speaker.ACTION_ACL_CONNECTED)) {
+                if(isPaired()) {
                     indicator_bluetooth_pair.setBackgroundResource(R.drawable.test_ok);
-                    connection_status=true;
-                }
-                else{
-                    Toast.makeText(Test_bluetooth.this,"connected to other device",Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -83,6 +76,8 @@ public class Test_bluetooth extends Activity {
         indicator_bluetooth_pair=(Button)findViewById(R.id.indicator_bluetooth_pair);
         bluetooth_play_option=(LinearLayout)findViewById(R.id.bluetooth_play_option);
         indicator_bluetooth_play=(Button)findViewById(R.id.indicator_bluetooth_play);
+        bluetooth_disable_option=(LinearLayout)findViewById(R.id.bluetooth_disable_option);
+        indicator_bluetooth_disable=(Button)findViewById(R.id.indicator_bluetooth_disable);
 
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
@@ -131,16 +126,54 @@ public class Test_bluetooth extends Activity {
             }
         });
 
+        bluetooth_disable_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!bluetoothAdapter.isEnabled()){
+                    indicator_bluetooth_disable.setBackgroundResource(R.drawable.test_ok);
+                }
+                else{
+                    bluetoothAdapter.disable();
+                }
+            }
+        });
+
         bluetooth_pair_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(bluetooth_support) {
                     filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
                     filter.addAction(BluetoothDevice.ACTION_FOUND);
                     registerReceiver(mReceiver, filter);
-                    bluetoothAdapter.startDiscovery();
-                    Toast.makeText(Test_bluetooth.this,"Searching device...",Toast.LENGTH_SHORT).show();
+
+                    if(isPaired()){
+                        indicator_bluetooth_pair.setBackgroundResource(R.drawable.test_ok);
+                    }
+                    else {
+                        bluetoothAdapter.startDiscovery();
+                        Toast.makeText(Test_bluetooth.this,"Searching device...",Toast.LENGTH_SHORT).show();
+                        Thread thread=new Thread(){
+                            public void run(){
+                                try {
+                                    sleep(10000);
+                                }catch(Exception e){exit(1);}
+                                finally{
+                                        if(!isPaired()){
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    indicator_bluetooth_pair.setBackgroundResource(R.drawable.test_fail);
+                                                }
+                                            });
+                                            unregisterReceiver(mReceiver);
+                                            try{
+                                                Create_result_xml.create_result_xml(Test_bluetooth.this, "TEST_BLUETOOTH", "FAIL", "Unable to pair with the device");
+                                            }catch(Exception e){exit(1);}
+                                        }
+                                }
+                            }
+                        };thread.start();
+                    }
                 }
                 else{
                     Toast.makeText(Test_bluetooth.this,"Device does not support bluetooth",Toast.LENGTH_SHORT).show();
@@ -153,10 +186,7 @@ public class Test_bluetooth extends Activity {
             public void onClick(View v) {
 
                 if(bluetooth_support) {
-
-                    if(test_speaker!=null && "th3rocksmachine".equalsIgnoreCase(test_speaker.getName()) && connection_status) {
-                        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-                        registerReceiver(mReceiver, filter);
+                    if(isPaired()) {
                         music = MediaPlayer.create(Test_bluetooth.this, R.raw.speaker_test);
 
                         music.start();
@@ -172,7 +202,7 @@ public class Test_bluetooth extends Activity {
                                 dialogInterface.cancel();
                                 indicator_bluetooth_play.setBackgroundResource(R.drawable.test_fail);
                                 try{
-                                    Create_result_xml.create_result_xml(Test_bluetooth.this, "TEST_BLUETOOTH", "FAIL", "User could not hear the music through the bluetooth test speaker");
+                                    Create_result_xml.create_result_xml(Test_bluetooth.this, "TEST_BLUETOOTH", "FAIL", "User could not hear the music through the bluetooth test speaker, connection failed with the bluetooth speaker");
                                 }catch(Exception e){exit(1);}
                             }
                         });
@@ -189,9 +219,6 @@ public class Test_bluetooth extends Activity {
                         builder.show();
                     }
                     else{
-                        try{
-                            Create_result_xml.create_result_xml(Test_bluetooth.this, "TEST_BLUETOOTH", "FAIL", "Unable to establish connection with the device");
-                        }catch(Exception e){exit(1);}
                         AlertDialog.Builder builder=new AlertDialog.Builder(Test_bluetooth.this);
 
                         builder.setCancelable(true);
@@ -211,6 +238,25 @@ public class Test_bluetooth extends Activity {
                 }
             }
         });
+    }
+
+   static boolean isPaired() {
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+
+        List<String> pairedDevicesList = new ArrayList<String>();
+        for (BluetoothDevice bt : pairedDevices)
+            pairedDevicesList.add(bt.getName());
+
+        if(pairedDevicesList.contains(device_name)){
+            return true;
+        }
+        else{
+            return  false;
+        }
+    }
+
+    static void setPair_fail(){
+        indicator_bluetooth_pair.setBackgroundResource(R.drawable.test_fail);
     }
 }
 

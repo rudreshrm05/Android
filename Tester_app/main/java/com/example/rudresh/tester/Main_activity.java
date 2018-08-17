@@ -1,9 +1,11 @@
 package com.example.rudresh.tester;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
@@ -17,10 +19,13 @@ import android.os.Environment;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
+import android.util.Xml;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import org.xmlpull.v1.XmlSerializer;
 
 import java.io.File;
 import java.util.List;
@@ -42,6 +47,7 @@ public class Main_activity extends Activity{
     MediaPlayer test_audio_file;
     public int signalStrengthDbm = 0;
     public int signalStrengthAsuLevel = 0;
+    static boolean WIFI_ON=false, WIFI_OFF=false;
 
 
     //Broadcast receiver to receive intents
@@ -63,8 +69,12 @@ public class Main_activity extends Activity{
                 int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WifiManager.WIFI_STATE_UNKNOWN);
 
                 if (state == WifiManager.WIFI_STATE_ENABLED||state == WifiManager.WIFI_STATE_ENABLING) {
-                    indicator_wifi.setBackgroundResource(R.drawable.test_ok);
+                    WIFI_ON=true;
                 }
+                else if(state == WifiManager.WIFI_STATE_DISABLED||state == WifiManager.WIFI_STATE_DISABLING){
+                    WIFI_OFF=true;
+                }
+
             }
 
             if(action.equals(AudioManager.ACTION_HEADSET_PLUG)){
@@ -137,9 +147,7 @@ public class Main_activity extends Activity{
         telephonyManager.listen(phone_state_listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
 
-        File path = new File(getFilesDir().toString());
-        path.mkdirs();
-        File file=new File(path, "Test_result.xml");
+        File file=new File(getString(R.string.Test_result_xml_path));
 
        if(file.exists()){
            file.delete();
@@ -169,10 +177,8 @@ public class Main_activity extends Activity{
         wifi_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wifi = (WifiManager) getSystemService(Main_activity.WIFI_SERVICE);
-                IntentFilter filter_wifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
-                registerReceiver(broad_cast_receiver, filter_wifi);
-                Test_wifi.test_wifi(Main_activity.this, wifi, indicator_wifi);
+                Intent intent=new Intent(Main_activity.this, Test_wifi.class);
+                startActivity(intent);
             }
         });
 
@@ -191,20 +197,35 @@ public class Main_activity extends Activity{
         signal_strength_option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String dialogMessage="";
                if(signalStrengthAsuLevel>6&&signalStrengthDbm>-97){
                    indicator_signal_strength.setBackgroundResource(R.drawable.test_ok);
+                  dialogMessage="Dbm : "+signalStrengthDbm+"\n"+"Asu : "+signalStrengthAsuLevel;
                    try{
                        Create_result_xml.create_result_xml(Main_activity.this, "TEST_SIGNAL_STRENGTH", "PASS","");
                    }catch(Exception e){exit(1);}
                }
                else{
                    indicator_signal_strength.setBackgroundResource(R.drawable.test_fail);
+                   dialogMessage="Dbm : "+signalStrengthDbm+"\n"+"Asu : "+signalStrengthAsuLevel+"\n"+"Low signal strength(<6 asu and <-97 dbm)";
                    try{
                        Create_result_xml.create_result_xml(Main_activity.this, "TEST_SIGNAL_STRENGTH", "FAIL","Signal strength low");
                    }catch(Exception e){exit(1);}
                }
-                Toast.makeText(Main_activity.this,"dBm = "+signalStrengthDbm+"\n"+"asu = "+signalStrengthAsuLevel,Toast.LENGTH_SHORT).show();
+
+                AlertDialog.Builder builder=new AlertDialog.Builder(Main_activity.this);
+
+                builder.setCancelable(true);
+                builder.setTitle("Signal strength");
+
+                builder.setMessage(dialogMessage);
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+                builder.show();
             }
         });
 
@@ -227,6 +248,18 @@ public class Main_activity extends Activity{
                 IntentFilter filter_headset = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
                 registerReceiver(broad_cast_receiver, filter_headset);
                 indicator_headphone_jack.setBackgroundResource(R.drawable.test_fail);
+                AlertDialog.Builder builder=new AlertDialog.Builder(Main_activity.this);
+
+                builder.setCancelable(true);
+                builder.setTitle("Test Headphone jack");
+                builder.setMessage("Please plugin the headset to test");
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                });
+                builder.show();
             }
         });
 
@@ -295,6 +328,26 @@ public class Main_activity extends Activity{
 
         else if("FAIL".equals(Create_result_xml.RESULT_TEST_SIM_FUNCTIONALITY))
             indicator_sim_functionality.setBackgroundResource(R.drawable.test_fail);
+
+        if("PASS".equals(Create_result_xml.RESULT_TEST_WIFI))
+            indicator_wifi.setBackgroundResource(R.drawable.test_ok);
+
+        else if("FAIL".equals(Create_result_xml.RESULT_TEST_WIFI))
+            indicator_wifi.setBackgroundResource(R.drawable.test_fail);
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Main_activity.this.finish();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 }
 
