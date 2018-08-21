@@ -32,7 +32,7 @@ public class Test_sim_functionality extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sim_functionality);
 
-        Create_logCat.create_logCat("SIMFunctionality", getString(R.string.Tester_logdir_path));
+        Create_logCat.create_logCat("SIMFunctionality", Main_activity.app_logs_dir_path);
 
         telephonyInfo = TelephonyInfo.getInstance(Test_sim_functionality.this);
 

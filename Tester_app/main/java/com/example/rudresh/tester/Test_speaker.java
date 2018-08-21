@@ -26,7 +26,7 @@ public class Test_speaker {
 
     static void test_speaker(Activity activity, MediaPlayer audio_file, AudioManager audio_Manager, Button indicatorSpeaker) {
 
-        Create_logCat.create_logCat("TestSpeaker", activity.getString(R.string.Tester_logdir_path));
+        Create_logCat.create_logCat("TestSpeaker", Main_activity.app_logs_dir_path);
 
         int sampleRate = 8000;
         test_audio_file = audio_file;

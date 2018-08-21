@@ -14,7 +14,7 @@ import static java.lang.System.exit;
 public class Test_signal_strength {
     public  static void test_signal_strength(Activity activity, Button indicator_signal_strength){
 
-        Create_logCat.create_logCat("testSignalStrength", activity.getString(R.string.Tester_logdir_path));
+        Create_logCat.create_logCat("testSignalStrength", Main_activity.app_logs_dir_path);
 
         int MIN_ASU=6, MIN_DBM=-97;
         int signalStrengthAsuLevel=Main_activity.signalStrengthAsuLevel;

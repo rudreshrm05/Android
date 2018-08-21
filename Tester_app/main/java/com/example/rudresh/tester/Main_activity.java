@@ -60,7 +60,16 @@ public class Main_activity extends Activity{
            help_basic_apps_uninstallable,
            help_check_engineermode;
 
-    LinearLayout bluetooth_Option, wifi_option, sim_functionality_option, signal_strength_option, nfc_option, headphone_jack_option, basic_apps_option, speaker_option, basic_apps_uninstallable_option, check_engineermode_option;
+    LinearLayout bluetooth_Option,
+                 wifi_option,
+                 sim_functionality_option,
+                 signal_strength_option,
+                 nfc_option,
+                 headphone_jack_option,
+                 basic_apps_option,
+                 speaker_option,
+                 basic_apps_uninstallable_option,
+                 check_engineermode_option;
     WifiManager wifi;
     NfcManager manager;
     NfcAdapter adapter;
@@ -72,7 +81,7 @@ public class Main_activity extends Activity{
     File logDirectory ;
     File logFile;
     Process process;
-    final int MIN_ASU=6, MIN_DBM=-97;
+    static String app_logs_dir_path=Environment.getExternalStorageDirectory().getAbsolutePath()+"/Tester/Tester_logs";
 
 
     //Broadcast receiver to receive intents
@@ -119,12 +128,12 @@ public class Main_activity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
 
-        logDirectory = new File(getString(R.string.Tester_logdir_path));
+        logDirectory = new File(app_logs_dir_path);
         logFile = new File(logDirectory, "logcat" +"Tester"+ ".txt");
 
         // create log folder
         if (!logDirectory.exists()) {
-            logDirectory.mkdir();
+            logDirectory.mkdirs();
         }
         if(logFile.exists()){
             logFile.delete();
@@ -202,7 +211,7 @@ public class Main_activity extends Activity{
         telephonyManager.listen(phone_state_listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
 
-        File file=new File(getString(R.string.Test_result_xml_path));
+        File file=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Tester/Tester_result.xml");
 
        if(file.exists()){
            file.delete();
@@ -273,7 +282,7 @@ public class Main_activity extends Activity{
             @Override
             public void onClick(View v) {
 
-                Create_logCat.create_logCat("HeadPhoneJack", getString(R.string.Tester_logdir_path));
+                Create_logCat.create_logCat("HeadPhoneJack", app_logs_dir_path);
 
                 IntentFilter filter_headset = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
                 registerReceiver(broad_cast_receiver, filter_headset);

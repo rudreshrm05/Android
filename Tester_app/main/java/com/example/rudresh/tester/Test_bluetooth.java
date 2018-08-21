@@ -112,7 +112,7 @@ public class Test_bluetooth extends Activity {
             @Override
             public void onClick(View v) {
 
-                Create_logCat.create_logCat("TestBluetoothEnable", getString(R.string.Tester_logdir_path));
+                Create_logCat.create_logCat("TestBluetoothEnable", Main_activity.app_logs_dir_path);
 
                 if(bluetoothAdapter.isEnabled()){
                     indicator_bluetooth_enable.setBackgroundResource(R.drawable.test_ok);
@@ -134,7 +134,7 @@ public class Test_bluetooth extends Activity {
             @Override
             public void onClick(View v) {
 
-                Create_logCat.create_logCat("TestBluetoothDisable", getString(R.string.Tester_logdir_path));
+                Create_logCat.create_logCat("TestBluetoothDisable", Main_activity.app_logs_dir_path);
 
                 if(!bluetoothAdapter.isEnabled()){
                     indicator_bluetooth_disable.setBackgroundResource(R.drawable.test_ok);
@@ -149,7 +149,7 @@ public class Test_bluetooth extends Activity {
             @Override
             public void onClick(View v) {
 
-                Create_logCat.create_logCat("TestBluetoothPair", getString(R.string.Tester_logdir_path));
+                Create_logCat.create_logCat("TestBluetoothPair", Main_activity.app_logs_dir_path);
 
                 if(bluetooth_support) {
                     filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
@@ -195,7 +195,7 @@ public class Test_bluetooth extends Activity {
             @Override
             public void onClick(View v) {
 
-                Create_logCat.create_logCat("TestBluetoothPlay", getString(R.string.Tester_logdir_path));
+                Create_logCat.create_logCat("TestBluetoothPlay", Main_activity.app_logs_dir_path);
 
                 if(bluetooth_support) {
                     if(isPaired()) {

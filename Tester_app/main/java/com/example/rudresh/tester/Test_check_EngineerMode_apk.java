@@ -17,7 +17,7 @@ import static java.lang.System.exit;
 public class Test_check_EngineerMode_apk {
     static void check_engineermode_apk(Activity activity, Button indicator_check_EngineerMode){
 
-        Create_logCat.create_logCat("TestEngMode", activity.getString(R.string.Tester_logdir_path));
+        Create_logCat.create_logCat("TestEngMode", Main_activity.app_logs_dir_path);
 
         File engineerModeApk_path=new File("/system/priv-app/EngineerMode.apk");
 

@@ -20,7 +20,7 @@ public class Test_basic_apps_uninstallable {
 
     static void test_basic_apps_uninstallable(Activity activity,String package_names[], List<ApplicationInfo> all_packages, Button indicator_basic_apps_uninstallable){
 
-        Create_logCat.create_logCat("basicAppsUninstallable", activity.getString(R.string.Tester_logdir_path));
+        Create_logCat.create_logCat("basicAppsUninstallable",Main_activity.app_logs_dir_path);
 
         int count_non_uninstallable_ba=0;
 

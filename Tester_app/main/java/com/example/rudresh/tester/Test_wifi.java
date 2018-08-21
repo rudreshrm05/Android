@@ -54,9 +54,9 @@ public class Test_wifi extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_wifi);
 
-        Create_logCat.create_logCat("TestWiFi", getString(R.string.Tester_logdir_path));
+        Create_logCat.create_logCat("TestWiFi", Main_activity.app_logs_dir_path);
 
-        wifi = (WifiManager) getSystemService(Main_activity.WIFI_SERVICE);
+        wifi = (WifiManager) getApplicationContext().getSystemService(getApplicationContext().WIFI_SERVICE);
         IntentFilter filter_wifi = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
         registerReceiver(broad_cast_receiver, filter_wifi);
 

@@ -18,7 +18,7 @@ import static java.lang.System.exit;
 public class Test_nfc {
    static void test_nfc(Activity activity, NfcAdapter adapter, Button indicator_nfc){
 
-       Create_logCat.create_logCat("TestNfc", activity.getString(R.string.Tester_logdir_path));
+       Create_logCat.create_logCat("TestNfc", Main_activity.app_logs_dir_path);
 
         if(adapter==null){
             indicator_nfc.setBackgroundResource(R.drawable.test_fail);

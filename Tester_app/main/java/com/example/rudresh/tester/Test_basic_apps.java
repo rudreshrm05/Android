@@ -14,7 +14,7 @@ import static java.lang.System.exit;
 public class Test_basic_apps{
     static void test_basic_apps(Activity activity, String[] package_names, List<ApplicationInfo> packages, Button indicator_basic_apps){
 
-        Create_logCat.create_logCat("basicApps", activity.getString(R.string.Tester_logdir_path));
+        Create_logCat.create_logCat("basicApps", Main_activity.app_logs_dir_path);
 
         int app_count=0, mpi=0;
         boolean isPackageExist;
